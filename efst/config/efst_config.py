@@ -19,6 +19,9 @@ from efst.utils.efst_utils import FSHelper
 from efst.encfs.encfs_handler import EncFSHandler
 
 
+''' EFST conf file handling
+'''
+
 class EntryTypes(IntEnum):
     ''' Defines EFST entries types
     '''
@@ -62,7 +65,6 @@ class EFSTConfigKeys:
     BLOCK_MAC_RAND_BYTES = 'blockMACRandBytes'
     ALLOW_HOLES = 'allowHoles'
 
-
     @staticmethod
     def entry_key_for_type(entry_type):
         if entry_type == EntryTypes.CipherText:
@@ -85,18 +87,16 @@ class ConfigEntries:
 
 
 class EFSTConfigHandler:
-    ''' EFSTT config file operations
-    '''
     def __init__(self, lookup_path = None):
         if lookup_path is None:
             lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
-            print(lookup_path)
         self.config = ConfigObj(lookup_path)
 
-    # EncFS entries
+    # EFST entries
     def register_entry(self, entry_name, entry_type, pwd_entry,
                             conf_path, encfs_dir_path, mount_dir_path, mount_name):
-
+        ''' Registers EFST conf entry
+        '''
         entry_key = EFSTConfigKeys.entry_key_for_type(entry_type)
 
         if entry_name in self.registered_entries():
@@ -115,6 +115,8 @@ class EFSTConfigHandler:
                                                                         else 'CipherText', entry_name))
 
     def unregister_entry(self, entry_name):
+        ''' Un-registers EFST conf entry
+        '''
         entry_key = self._entry_key(entry_name)
         if entry_key:
             del(self.config[entry_key][entry_name])
@@ -126,6 +128,8 @@ class EFSTConfigHandler:
             return False
 
     def registered_entries(self):
+        ''' All EFST registered entries
+        '''
         registered_entries = [entry for entry in self.config[EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY].keys()]
         registered_entries += [entry for entry in self.config[EFSTConfigKeys.PLAIN_TEXT_ENTRIES_KEY].keys()]
         if not registered_entries:
@@ -133,6 +137,8 @@ class EFSTConfigHandler:
         return registered_entries
 
     def entry(self, entry_name):
+        ''' Given an entry name, reads and returns the entry info
+        '''
         entry = None
         entry_key = self._entry_key(entry_name)
         if entry_key:
@@ -148,11 +154,15 @@ class EFSTConfigHandler:
 
     # EncFS Config entries
     def registered_encfs_cfg_entries(self):
+        ''' All EncFS registered configurations
+        '''
         return [entry for entry in self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY].keys()]
 
     def register_encfs_cfg_entry(self, entry_name, entry_info):
+        ''' Registeres EncFS configuration
+        '''
         if entry_name in self.registered_encfs_cfg_entries():
-            print('"{}": entry already registered'.format(entry_name))
+            print('"{}": EncFS conf. entry already registered'.format(entry_name))
         else:
             self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name] = {
                     EFSTConfigKeys.CIPHER_ALG: entry_info.cipherAlg,
@@ -168,8 +178,10 @@ class EFSTConfigHandler:
             print('{0} entry registered'.format(entry_name))
 
     def unregister_encfs_cfg_entry(self, entry_name):
+        ''' Un-registeres EncFS configuration
+        '''
         if not entry_name in self.registered_encfs_cfg_entries():
-            print('"{0}": entry not registered'.format(entry_name))
+            print('"{0}": EncFS conf. entry not registered'.format(entry_name))
             return False
         else:
             del(self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name])
@@ -178,6 +190,8 @@ class EFSTConfigHandler:
             return True
 
     def encfs_cfg_entry(self, cfg_entry_name = None):
+        ''' Given an EncFS conf. entry name, reads and returns the entry info
+        '''
         entry = None
 
         if not cfg_entry_name:
@@ -196,7 +210,6 @@ class EFSTConfigHandler:
                         entry_reader.get(EFSTConfigKeys.BLOCK_MAC_RAND_BYTES),
                         entry_reader.get(EFSTConfigKeys.ALLOW_HOLES))
         return entry
-
 
     # Internal helpers
     def _entry_key(self, entry_name):

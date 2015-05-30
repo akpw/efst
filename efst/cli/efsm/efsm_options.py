@@ -15,8 +15,29 @@ import os
 from enum import IntEnum
 from efst.cli.efst.efst_options import EFSTOptionsParser, EFSTHelpFormatter, EFSTCommands
 from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, OSConfig
+from efst.config.efst_config import config_handler, OSConfig, EFSTConfigKeys
 from efst.utils.efst_utils import FSHelper, UniqueDirNamesChecker, UniquePartialMatchList
+
+
+
+class EFSMCommands(EFSTCommands):
+    CREATE = 'create'
+    REGISTER = 'register'
+    UNREGISTER = 'unregister'
+    MOUNT = 'mount'
+    UMOUNT = 'umount'
+
+    @classmethod
+    def commands_meta(cls):
+        return ''.join(('{',
+                        '{}, '.format(cls.CREATE),
+                        '{}, '.format(cls.REGISTER),
+                        '{}, '.format(cls.UNREGISTER),
+                        '{}, '.format(cls.MOUNT),
+                        '{}, '.format(cls.UMOUNT),
+                        '{}, '.format(cls.INFO),
+                        '{}'.format(cls.VERSION),
+                        '}'))
 
 
 class ConfKeyActionType(IntEnum):
@@ -25,9 +46,130 @@ class ConfKeyActionType(IntEnum):
     Create = 0
     Register = 1
 
+
 class EFSMOptionsParser(EFSTOptionsParser):
     ''' EFSM Options Parser
     '''
+    def __init__(self):
+        self._script_name = 'EFSM'
+        self._description = \
+    '''
+    EFSM is a part of EFST tools. It enables creating
+    new / registering existing EncFS back-end stores,
+    and then easily manipulate corresponding
+    ciphered / plaintext views.
+    '''
+
+    # Options parsing
+    def parse_commands(self, parser):
+        ''' Commands parsing
+        '''
+        subparsers = parser.add_subparsers(dest = 'sub_cmd',
+                                                title = 'EFSM commands',
+                                                        metavar = EFSMCommands.commands_meta())
+        self._add_version(subparsers)
+        self._add_info(subparsers)
+
+        # Create
+        create_parser = subparsers.add_parser(EFSMCommands.CREATE,
+                                   description = 'Sets up and register EncFS backend folder and its corresponding view',
+                                   formatter_class=EFSTHelpFormatter)
+        self._add_entry_groups(create_parser, action_type = ConfKeyActionType.Create)
+        self._add_config_entry(create_parser)
+
+        # Register
+        register_parser = subparsers.add_parser(EFSMCommands.REGISTER,
+                                   description = 'Register EncFS backend folder and sets up its corresponding view',
+                                   formatter_class=EFSTHelpFormatter)
+        self._add_entry_groups(register_parser, action_type = ConfKeyActionType.Register)
+
+        # Unregister
+        unregister_parser = subparsers.add_parser(EFSMCommands.UNREGISTER,
+                                   description = 'Removes a registered EncFS entry',
+                                             formatter_class=EFSTHelpFormatter)
+        self._add_entry_name(unregister_parser, registered_only = True, help = "Name of entry to unregister")
+
+        # Mount
+        mount_parser = subparsers.add_parser(EFSMCommands.MOUNT,
+                                             description = 'Mounts a registered EncFS entry',
+                                             formatter_class=EFSTHelpFormatter)
+        self._add_entry_name(mount_parser, registered_only = True, help = "Name of registered entry to mount")
+
+        # Umount
+        umount_parser = subparsers.add_parser(EFSMCommands.UMOUNT,
+                                             description = 'Un-mounts a registered EncFS entry',
+                                             formatter_class=EFSTHelpFormatter)
+        self._add_entry_name(umount_parser, registered_only = True, help = "Name of registered entry to un-mount")
+
+
+    # Options checking
+    def _check_cmd_args(self, args, parser):
+        ''' Validation of supplied CLI commands
+        '''
+        super()._check_cmd_args(args, parser)
+        if args['sub_cmd'] in (EFSMCommands.VERSION, EFSMCommands.INFO):
+            # not much to check there
+           pass
+
+        elif args['sub_cmd'] not in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
+            # Registered Entry name could be a partial match, need to expand
+            args['entry_name'] = UniquePartialMatchList(
+                                        config_handler.registered_entries()).find(args['entry_name'])
+
+            if args['entry_name'] == EFSTConfigKeys.NO_ENTRIES_REGISTERED:
+                print('No suitable config entry to {}'.format(args['sub_cmd']))
+                print('To set up and register a new EncFS backend entry: \n\t $ efsm create -h')
+                print('To register an existing EncFS backend entry: \n\t $ efsm register -h')
+                parser.exit()
+
+        elif args['sub_cmd'] in (EFSMCommands.REGISTER, EFSMCommands.CREATE, EFSMCommands.MOUNT):
+            # compile pwd entry name
+            args['pwd_entry'] = 'efst-entry-{}'.format(args['entry_name'])
+
+            if args['sub_cmd'] in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
+                if not args['mountpoint_path']:
+                    # compile mount volume path
+                    unique_names_checker = UniqueDirNamesChecker(OSConfig.MOUNTPOINT_FOLDER)
+                    mountpoint = unique_names_checker.unique_name(format(args['entry_name']))
+                    args['mountpoint_path'] = os.path.join(OSConfig.MOUNTPOINT_FOLDER, mountpoint)
+
+                # if not specified, compile mount name as well
+                if not args['mount_name']:
+                    args['mount_name'] = args['entry_name']
+
+                # conf/key path
+                default_cfg_path = os.path.join(args['backend_path'], EncFSHandler.DEFAULT_CFG_FNAME)
+                if not args['conf_path']:
+                    # if no conf path specified, try out the default
+                    args['conf_path'] = default_cfg_path
+
+                if args['sub_cmd'] == EFSMCommands.REGISTER:
+                    if not os.path.exists(args['conf_path']):
+                        print('The config file was not found at location: \n\t"{}"'.format(args['conf_path']))
+                        print('Please specify the correct config file using the "--conf-path" option')
+                        parser.exit()
+
+                elif args['sub_cmd'] == EFSMCommands.CREATE:
+                    if os.path.exists(args['conf_path']):
+                        # using default path
+                        if args['conf_path'] == default_cfg_path:
+                            print('The directory already seems to be an EncFS backend store with existing conf. file: \n\t"{0}"' \
+                                  '\n\t"{1}"'.format(args['backend_path'], default_cfg_path))
+                            print('To setup a directory as multiple interleaved EncFS Backends, use the "--conf-path" option'
+                                  'to explicitly specify the new conf/key file')
+                            parser.exit()
+                        else:
+                            print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
+                            print('To register an existing backend store, run "efst register -h"')
+                            parser.exit()
+
+    @property
+    def _default_command(self):
+        ''' Default to showing help
+        '''
+        return None
+
+    # Helpers
     @staticmethod
     def _add_entry_name(parser, registered_only = False, help = 'EFSM Entry name'):
         parser.add_argument('-en', '--entry-name', dest = 'entry_name',
@@ -74,109 +216,3 @@ class EFSMOptionsParser(EFSTOptionsParser):
                         help = 'Mounted volume name. If ommitted, the entry name will be used')
 
 
-    # Options checking
-    @classmethod
-    def _check_cmd_args(cls, args, parser):
-        ''' Validation of supplied CLI commands
-        '''
-        super()._check_cmd_args(args, parser)
-        if args['sub_cmd'] == 'version':
-            # not much to check there
-           pass
-
-        elif args['sub_cmd'] not in ('register', 'create'):
-            # Registered Entry name could be a partial match, need to expand
-            args['entry_name'] = UniquePartialMatchList(
-                                        config_handler.registered_entries()).find(args['entry_name'])
-
-        elif args['sub_cmd'] in ('register', 'create', 'mount'):
-            # compile pwd entry name
-            args['pwd_entry'] = 'efst-entry-{}'.format(args['entry_name'])
-
-            if args['sub_cmd'] in ('register', 'create'):
-                if not args['mountpoint_path']:
-                    # compile mount volume path
-                    unique_names_checker = UniqueDirNamesChecker(OSConfig.MOUNTPOINT_FOLDER)
-                    mountpoint = unique_names_checker.unique_name(format(args['entry_name']))
-                    args['mountpoint_path'] = os.path.join(OSConfig.MOUNTPOINT_FOLDER, mountpoint)
-
-                # if not specified, compile mount name as well
-                if not args['mount_name']:
-                    args['mount_name'] = args['entry_name']
-
-                # conf/key path
-                default_cfg_path = os.path.join(args['backend_path'], EncFSHandler.DEFAULT_CFG_FNAME)
-                if not args['conf_path']:
-                    # if no conf path specified, try out the default
-                    args['conf_path'] = default_cfg_path
-
-                if args['sub_cmd'] == 'register':
-                    if not os.path.exists(args['conf_path']):
-                        print('The config file was not found at location: \n\t"{}"'.format(args['conf_path']))
-                        print('Please specify the correct config file using the "--conf-path" option')
-                        parser.exit()
-
-                if args['sub_cmd'] == 'create':
-                    if os.path.exists(args['conf_path']):
-                        # using default path
-                        if args['conf_path'] == default_cfg_path:
-                            print('The directory already seems to be an EncFS backend store with existing conf. file: \n\t"{0}"' \
-                                  '\n\t"{1}"'.format(args['backend_path'], default_cfg_path))
-                            print('To setup a directory as multiple interleaved EncFS Backends, use the "--conf-path" option'
-                                  'to explicitly specify the new conf/key file')
-                            parser.exit()
-                        else:
-                            print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
-                            print('To register an existing backend store, run "efst register -h"')
-                            parser.exit()
-
-    # Options parsing
-    @classmethod
-    def parse_commands(cls, parser):
-        ''' Commands parsing
-        '''
-        subparsers = parser.add_subparsers(dest = 'sub_cmd', title = 'EFSM commands',
-                                        metavar = '{create, register, unregister, mount, umount, version}')
-        cls._add_version(subparsers)
-
-        # Create
-        create_parser = subparsers.add_parser('create',
-                                   description = 'Sets up and register EncFS backend folder and its corresponding view',
-                                   formatter_class=EFSTHelpFormatter)
-        cls._add_entry_groups(create_parser, action_type = ConfKeyActionType.Create)
-        cls._add_config_entry(create_parser)
-
-        # Register
-        register_parser = subparsers.add_parser('register',
-                                   description = 'Register EncFS backend folder and sets up its corresponding view',
-                                   formatter_class=EFSTHelpFormatter)
-        cls._add_entry_groups(register_parser, action_type = ConfKeyActionType.Register)
-
-        # Unregister
-        unregister_parser = subparsers.add_parser('unregister',
-                                   description = 'Removes a registered EncFS entry',
-                                             formatter_class=EFSTHelpFormatter)
-        cls._add_entry_name(unregister_parser, registered_only = True, help = "Name of entry to unregister")
-
-        # Mount
-        mount_parser = subparsers.add_parser('mount',
-                                             description = 'Mounts a registered EncFS entry',
-                                             formatter_class=EFSTHelpFormatter)
-        cls._add_entry_name(mount_parser, registered_only = True, help = "Name of registered entry to mount")
-
-        # Umount
-        umount_parser = subparsers.add_parser('umount',
-                                             description = 'Un-mounts a registered EncFS entry',
-                                             formatter_class=EFSTHelpFormatter)
-        cls._add_entry_name(umount_parser, registered_only = True, help = "Name of registered entry to un-mount")
-
-
-    @classmethod
-    def parse_options(cls, script_name = None, description = None):
-        ''' EFSM Options parsing workflow
-        '''
-        return super().parse_options(script_name = 'efsm',
-                                            description = '''
-                                                EFSM is a part of EFST tools. It enables create and register EncFS backend stores, and
-                                                then easily manipulate corresponding ciphered / plaintext views.
-                                              ''')

@@ -13,7 +13,7 @@
 ## GNU General Public License for more details.
 
 from efst.cli.efst.efst_dispatch import EFSTDispatcher
-from efst.cli.efsc.efsc_options import EFSCOptionsParser
+from efst.cli.efsc.efsc_options import EFSCOptionsParser, EFSCCommands
 
 
 class EFSCDispatcher(EFSTDispatcher):
@@ -30,8 +30,13 @@ class EFSCDispatcher(EFSTDispatcher):
             if args['sub_cmd'] in ('create-key'):
                 self.create_key(args)
 
+            else:
+                print('Nothing to dispatch')
+                return False
+
+        return True
+
 def main():
-    print('efsu')
     EFSCDispatcher().dispatch()
 
 if __name__ == '__main__':

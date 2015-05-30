@@ -16,7 +16,7 @@ import os
 from efst.encfs.encfs_handler import EncFSHandler
 from efst.config.efst_config import config_handler, EntryTypes
 from efst.cli.efst.efst_dispatch import EFSTDispatcher
-from efst.cli.efsm.efsm_options import EFSMOptionsParser
+from efst.cli.efsm.efsm_options import EFSMOptionsParser, EFSMCommands
 from efst.utils.efst_utils import PasswordHandler
 
 
@@ -31,30 +31,37 @@ class EFSMDispatcher(EFSTDispatcher):
         if not super().dispatch():
             args = self.option_parser.parse_options()
 
-            if args['sub_cmd'] in ('create'):
+            if args['sub_cmd'] in (EFSMCommands.CREATE):
                 if args['reverse']:
                     self.create_entry(args, EntryTypes.PlainText)
                 else:
                     self.create_entry(args, EntryTypes.CipherText)
 
-            elif args['sub_cmd'] in ('register'):
+            elif args['sub_cmd'] in (EFSMCommands.REGISTER):
                 if args['reverse']:
                     self.register_entry(args, EntryTypes.PlainText)
                 else:
                     self.register_entry(args, EntryTypes.CipherText)
 
-            elif args['sub_cmd'] == 'unregister':
+            elif args['sub_cmd'] == EFSMCommands.UNREGISTER:
                 self.unregister_entry(args)
 
-            elif args['sub_cmd'] == 'mount':
+            elif args['sub_cmd'] == EFSMCommands.MOUNT:
                 self.mount_entry(args)
 
-            elif args['sub_cmd'] == 'umount':
+            elif args['sub_cmd'] == EFSMCommands.UMOUNT:
                 self.umount_entry(args)
+
+            else:
+                print('Nothing to dispatch')
+                return False
+
+        return True
+
 
     # Dispatched methods
     def create_entry(self, args, entry_type):
-        ''' Creates and registeres backend store / respective view
+        ''' Creates and registers EncFS backend store / respective view
         '''
 
         if not os.path.exists(args['backend_path']):
@@ -71,6 +78,8 @@ class EFSMDispatcher(EFSTDispatcher):
 
 
     def register_entry(self, args, entry_type):
+        ''' Registers EncFS backend store / respective view
+        '''
         config_handler.register_entry(entry_name = args['entry_name'],
                                                         entry_type = entry_type,
                                                         pwd_entry = args['pwd_entry'],
@@ -80,6 +89,8 @@ class EFSMDispatcher(EFSTDispatcher):
                                                         mount_name = args['mount_name'])
 
     def unregister_entry(self, args):
+        ''' Un-Registers EncFS entry
+        '''
         entry = config_handler.entry(args['entry_name'])
 
         # if mounted, unmount
@@ -90,6 +101,8 @@ class EFSMDispatcher(EFSTDispatcher):
             PasswordHandler.delete_pwd(entry.pwd_entry)
 
     def mount_entry(self, args):
+        ''' Mounts a registered EncFS entry
+        '''
         mount_entry = config_handler.entry(args['entry_name'])
 
         pwd, new_pwd = PasswordHandler.get_pwd(mount_entry.pwd_entry)
@@ -106,6 +119,8 @@ class EFSMDispatcher(EFSTDispatcher):
                     self._store_pwd(pwd, mount_entry.pwd_entry)
 
     def umount_entry(self, args, quiet = False):
+        ''' Un-mounts a registered EncFS entry
+        '''
         umount_entry = config_handler.entry(args['entry_name'])
         EncFSHandler.umount(umount_entry.mount_dir_path, quiet = quiet)
 

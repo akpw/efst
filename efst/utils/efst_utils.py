@@ -51,6 +51,8 @@ class FSHelper:
     '''
     @staticmethod
     def full_path(path, check_parent_path = False):
+        ''' Full path
+        '''
         if path:
             path = os.path.expanduser(path)
             path = os.path.expandvars(path)
@@ -66,7 +68,9 @@ class FSHelper:
         return path if path else None
 
     @staticmethod
-    def getmount(path):
+    def mountpoint(path):
+        ''' The mount point portion of a path
+        '''
         path = FSHelper.full_path(path)
         while path != os.path.sep:
             if os.path.ismount(path):
@@ -78,6 +82,8 @@ class FSHelper:
     def move_FS_entry(orig_path, target_path,
                       check_unique = True,
                       quiet = False, stop = False):
+        ''' Moves FS entry
+        '''
         succeeded = False
         try:
             if check_unique and os.path.exists(target_path):

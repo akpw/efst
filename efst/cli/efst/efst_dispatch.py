@@ -48,14 +48,13 @@ class EFSTDispatcher:
         ''' Prints EFST version info
         '''
         version = pkg_resources.require("efst")[0].version
-        print('EFS tools version {}'.format(version))
+        print('Encrypted File System Tools version {}'.format(version))
 
     def print_info(self):
         ''' Prints EFST general info
         '''
         print('Encrypted File System Tools: {}'.format(self.option_parser.script_name))
         print(self.option_parser.description)
-
 
     def create_key(self, args):
         ''' Creates EncFS conf/key file at specified location

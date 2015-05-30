@@ -38,9 +38,9 @@ class EncFSHandler:
 
                 cfg_name = os.path.join(tmp_encfs, EncFSHandler.DEFAULT_CFG_FNAME)
                 if os.path.exists(cfg_name):
-                    # if target path is directory,
-                    # compile default file name
                     if os.path.isdir(cfg_target_path):
+                        # if target path is directory,
+                        # compile default file name
                         cfg_target_path = os.path.join(cfg_target_path, EncFSHandler.DEFAULT_CFG_FNAME)
 
                     if FSHelper.move_FS_entry(cfg_name, cfg_target_path, quiet = True):
@@ -49,11 +49,9 @@ class EncFSHandler:
                         print('Error creating conf/key file at requested location:\n\t"{}"'.format(cfg_target_path))
         return False
 
-
     @staticmethod
-    def mount(pwd, enc_cfg_path,
-                        encfs_dir_path, mount_dir_path,
-                            mount_name, reverse = False):
+    def mount(pwd, enc_cfg_path, encfs_dir_path,
+                    mount_dir_path, mount_name, reverse = False):
         # validate inputs
         if enc_cfg_path and not os.path.exists(enc_cfg_path):
             print('Wrong conf/key path: {}'.format(enc_cfg_path))
@@ -101,11 +99,12 @@ class EncFSHandler:
                 print('Unmounted: {}'.format(mount_dir_path))
             return True
 
-
     # Internal Helpers
     @staticmethod
     def _build_cmd(encfs_dir_path, mount_dir_path,
                             reverse = False, enc_cfg_path = None, mount_name = None, pwd = None):
+        ''' Builds appropriate EnFS command
+        '''
         cmd = ''.join((
                         'echo {} | '.format(pwd) if pwd else '',
                         ' ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
@@ -121,6 +120,8 @@ class EncFSHandler:
 
     @staticmethod
     def _run_expectant_cmd(cmd, cfg_entry, pwd):
+        ''' Creates new EncFS conf/key file
+        '''
 
         print('Creating EncFS backend store...')
 

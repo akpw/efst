@@ -96,7 +96,7 @@ class EFSTOptionsParser:
         # base command check
         if 'sub_cmd' not in args or not args['sub_cmd']:
             # If no command was specified, check for the default one
-            cmd = self._default_command()
+            cmd = self._default_command
             if cmd:
                 args['sub_cmd'] = cmd
             else:
@@ -104,11 +104,12 @@ class EFSTOptionsParser:
                 parser.print_help()
                 parser.exit()
 
-    @staticmethod
-    def _default_command():
+    @property
+    def _default_command(self):
         ''' If no command was specified, can add a default one here
         '''
         return EFSTCommands.INFO
+
 
     # Internal helpers
     @staticmethod
