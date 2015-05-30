@@ -16,14 +16,13 @@ setup(
     name='efst',
     version='0.14',
 
-    url='',
+    url='https://github.com/akpw/efst',
 
     author='Arseniy Kuznetsov',
     author_email='k.arseniy@gmail.com',
 
     description=('''
-                    EFST is a command-line tool for
-                    securing your data with Encrypted Filesystem (EncFS).
+                    Encrypted File System tools help secure your data with EncFS
                 '''),
     license='GNU General Public License v2 (GPLv2)',
 
