@@ -30,19 +30,19 @@ setup(
     packages=find_packages(exclude=['test*']),
 
     package_data = {
-        '': ['conf/*.conf'],
+        '': ['config/*.conf'],
     },
 
     keywords = 'EncFS create encrypt decrypt export mount unmount',
 
     install_requires = ['configobj>=5.0.6', 'keyring>=5.3', 'pexpect>=3.3'],
 
-    #test_suite = 'tests.batch_mp_test_suite',
+    #test_suite = 'tests.efst_test_suite',
 
     entry_points={'console_scripts': [
-        'efst = src.scripts.efst.efst_dispatch:main',
-        'efsc = src.scripts.efsc.efsc_dispatch:main',
-        'efsm = src.scripts.efsm.efsm_dispatch:main',
+        'efst = efst.cli.efst.efst_dispatch:main',
+        'efsc = efst.cli.efsc.efsc_dispatch:main',
+        'efsm = efst.cli.efsm.efsm_dispatch:main',
     ]},
 
     zip_safe=True,

@@ -14,10 +14,10 @@
 
 import sys
 from distutils.util import strtobool
-from src.utils.efst_utils import PasswordHandler
-from src.encfs.encfs_handler import EncFSHandler
-from src.config.efst_config import config_handler
-from src.scripts.efst.efst_options import EFSTOptionsParser
+from efst.utils.efst_utils import PasswordHandler
+from efst.encfs.encfs_handler import EncFSHandler
+from efst.config.efst_config import config_handler
+from efst.cli.efst.efst_options import EFSTOptionsParser, EFSTCommands
 import pkg_resources
 
 
@@ -31,11 +31,17 @@ class EFSTDispatcher:
     def dispatch(self):
         args = self.option_parser.parse_options()
 
-        if args['sub_cmd'] == 'version':
+        if args['sub_cmd'] == EFSTCommands.VERSION:
             self.print_version()
-            return True
 
-        return False
+        elif args['sub_cmd'] == EFSTCommands.INFO:
+            self.print_info()
+
+        else:
+            # nothing to dispatch
+            return False
+
+        return True
 
     # Dispatched methods
     def print_version(self):
@@ -43,6 +49,13 @@ class EFSTDispatcher:
         '''
         version = pkg_resources.require("efst")[0].version
         print('EFS tools version {}'.format(version))
+
+    def print_info(self):
+        ''' Prints EFST general info
+        '''
+        print('Encrypted File System Tools: {}'.format(self.option_parser.script_name))
+        print(self.option_parser.description)
+
 
     def create_key(self, args):
         ''' Creates EncFS conf/key file at specified location

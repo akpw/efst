@@ -13,10 +13,10 @@
 
 import os
 from enum import IntEnum
-from src.scripts.efst.efst_options import EFSTOptionsParser
-from src.encfs.encfs_handler import EncFSHandler
-from src.config.efst_config import config_handler, EntryTypes, OSConfig
-from src.utils.efst_utils import FSHelper, UniqueDirNamesChecker, UniquePartialMatchList, CustomFormatter
+from efst.cli.efst.efst_options import EFSTOptionsParser, EFSTHelpFormatter, EFSTCommands
+from efst.encfs.encfs_handler import EncFSHandler
+from efst.config.efst_config import config_handler, OSConfig
+from efst.utils.efst_utils import FSHelper, UniqueDirNamesChecker, UniquePartialMatchList
 
 
 class ConfKeyActionType(IntEnum):
@@ -142,32 +142,32 @@ class EFSMOptionsParser(EFSTOptionsParser):
         # Create
         create_parser = subparsers.add_parser('create',
                                    description = 'Sets up and register EncFS backend folder and its corresponding view',
-                                   formatter_class=CustomFormatter)
+                                   formatter_class=EFSTHelpFormatter)
         cls._add_entry_groups(create_parser, action_type = ConfKeyActionType.Create)
         cls._add_config_entry(create_parser)
 
         # Register
         register_parser = subparsers.add_parser('register',
                                    description = 'Register EncFS backend folder and sets up its corresponding view',
-                                   formatter_class=CustomFormatter)
+                                   formatter_class=EFSTHelpFormatter)
         cls._add_entry_groups(register_parser, action_type = ConfKeyActionType.Register)
 
         # Unregister
         unregister_parser = subparsers.add_parser('unregister',
                                    description = 'Removes a registered EncFS entry',
-                                             formatter_class=CustomFormatter)
+                                             formatter_class=EFSTHelpFormatter)
         cls._add_entry_name(unregister_parser, registered_only = True, help = "Name of entry to unregister")
 
         # Mount
         mount_parser = subparsers.add_parser('mount',
                                              description = 'Mounts a registered EncFS entry',
-                                             formatter_class=CustomFormatter)
+                                             formatter_class=EFSTHelpFormatter)
         cls._add_entry_name(mount_parser, registered_only = True, help = "Name of registered entry to mount")
 
         # Umount
         umount_parser = subparsers.add_parser('umount',
                                              description = 'Un-mounts a registered EncFS entry',
-                                             formatter_class=CustomFormatter)
+                                             formatter_class=EFSTHelpFormatter)
         cls._add_entry_name(umount_parser, registered_only = True, help = "Name of registered entry to un-mount")
 
 

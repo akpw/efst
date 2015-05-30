@@ -15,8 +15,8 @@ from enum import IntEnum
 from collections import namedtuple
 from configobj import ConfigObj
 from pkg_resources import Requirement, resource_filename
-from src.utils.efst_utils import FSHelper
-from src.encfs.encfs_handler import EncFSHandler
+from efst.utils.efst_utils import FSHelper
+from efst.encfs.encfs_handler import EncFSHandler
 
 
 class EntryTypes(IntEnum):
@@ -89,7 +89,8 @@ class EFSTConfigHandler:
     '''
     def __init__(self, lookup_path = None):
         if lookup_path is None:
-            lookup_path = resource_filename(Requirement.parse("efst"), "conf/efst.conf")
+            lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
+            print(lookup_path)
         self.config = ConfigObj(lookup_path)
 
     # EncFS entries

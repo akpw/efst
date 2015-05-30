@@ -12,8 +12,8 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-from src.scripts.efst.efst_dispatch import EFSTDispatcher
-from src.scripts.efsc.efsc_options import EFSCOptionsParser
+from efst.cli.efst.efst_dispatch import EFSTDispatcher
+from efst.cli.efsc.efsc_options import EFSCOptionsParser
 
 
 class EFSCDispatcher(EFSTDispatcher):

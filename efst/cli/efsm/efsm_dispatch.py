@@ -13,11 +13,11 @@
 ## GNU General Public License for more details.
 
 import os
-from src.encfs.encfs_handler import EncFSHandler
-from src.config.efst_config import config_handler, EntryTypes
-from src.scripts.efst.efst_dispatch import EFSTDispatcher
-from src.scripts.efsm.efsm_options import EFSMOptionsParser
-from src.utils.efst_utils import PasswordHandler
+from efst.encfs.encfs_handler import EncFSHandler
+from efst.config.efst_config import config_handler, EntryTypes
+from efst.cli.efst.efst_dispatch import EFSTDispatcher
+from efst.cli.efsm.efsm_options import EFSMOptionsParser
+from efst.utils.efst_utils import PasswordHandler
 
 
 class EFSMDispatcher(EFSTDispatcher):

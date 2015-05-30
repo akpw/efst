@@ -13,7 +13,7 @@
 
 import os, sys, shlex, pexpect
 from collections import namedtuple
-from src.utils.efst_utils import run_cmd, CmdProcessingError, temp_dir, FSHelper
+from efst.utils.efst_utils import run_cmd, CmdProcessingError, temp_dir, FSHelper
 
 
 class EncFSHandler:

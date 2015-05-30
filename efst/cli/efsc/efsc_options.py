@@ -12,9 +12,8 @@
 ## GNU General Public License for more details.
 
 import os
-from src.scripts.efst.efst_options import EFSTOptionsParser
-from src.encfs.encfs_handler import EncFSHandler
-from src.utils.efst_utils import CustomFormatter
+from efst.cli.efst.efst_options import EFSTOptionsParser, CustomFormatter
+from efst.encfs.encfs_handler import EncFSHandler
 
 
 class EFSCOptionsParser(EFSTOptionsParser):
