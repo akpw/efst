@@ -1,3 +1,0 @@
-configobj>=5.0.6
-keyring>=5.3
-pexpect>=3.3
