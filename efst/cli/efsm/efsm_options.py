@@ -127,6 +127,10 @@ class EFSMOptionsParser(EFSTOptionsParser):
             args['pwd_entry'] = 'efst-entry-{}'.format(args['entry_name'])
 
             if args['sub_cmd'] in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
+                if args['entry_name'] in (config_handler.registered_entries()):
+                    print('Entry Name already registered: \n\t{}'.format(args['entry_name']))
+                    parser.exit()
+
                 if not args['mountpoint_path']:
                     # compile mount volume path
                     unique_names_checker = UniqueDirNamesChecker(OSConfig.MOUNTPOINT_FOLDER)
