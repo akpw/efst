@@ -27,7 +27,7 @@ class EFSCDispatcher(EFSTDispatcher):
         if not super().dispatch():
             args = self.option_parser.parse_options()
 
-            if args['sub_cmd'] in ('create-key'):
+            if args['sub_cmd'] == EFSCCommands.CREATE_KEY:
                 self.create_key(args)
 
             else:

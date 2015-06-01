@@ -115,7 +115,6 @@ class EncFSHandler:
                         ' {}'.format(shlex.quote(mount_dir_path)),
                         ' -o volname={}'.format(shlex.quote(mount_name)) if mount_name else ''
                         ))
-        print(cmd)
         return cmd.strip()
 
     @staticmethod

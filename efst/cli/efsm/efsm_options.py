@@ -187,9 +187,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
 
         # Backend store
         required_args_group.add_argument('-bp', '--backend-path', dest = 'backend_path',
-            type = lambda f:FSHelper.full_path(f) \
+            type = (lambda bpath:FSHelper.full_path(bpath)) \
                     if action_type == ConfKeyActionType.Create \
-                        else (lambda d: cls._is_valid_dir_path(parser, d)),
+                        else (lambda bpath: cls._is_valid_dir_path(parser, bpath)),
             required = True,
             help = 'Path to the back-end store folder. ' \
                 'The backend folder typically contains your ciphered data, for which a plaintext view folder is set up and registered.' \
@@ -197,9 +197,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
 
         optional_args_group = parser.add_argument_group('Additional Arguments')
         optional_args_group.add_argument('-cp', '--conf-path', dest = 'conf_path',
-                        type = lambda f:FSHelper.full_path(f, check_parent_path = True) \
+                        type = (lambda cpath:FSHelper.full_path(cpath, check_parent_path = True)) \
                                  if action_type == ConfKeyActionType.Create \
-                                    else (lambda f: cls._is_valid_file_path(parser, f)),
+                                    else (lambda cpath: cls._is_valid_file_path(parser, cpath)),
                         help = '{0}ath to the EncFS conf/key file. ' \
                             'If ommitted, a default one will be {1} in the back-end folder'.format(
                                    'P' if action_type == ConfKeyActionType.Register else 'Target p',
@@ -208,7 +208,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
                     help = "Enables reverse mode, i.e. a ciphered view for a plaintext back-end data",
                     action='store_true')
         optional_args_group.add_argument('-mp', '--mountpoint-path', dest = 'mountpoint_path',
-            type = lambda d: cls._is_valid_dir_path(parser, d),
+            type = lambda mpath: cls._is_valid_dir_path(parser, mpath),
             help = 'Path to the mountpoint folder. If omitted, will be auto-generated from ' \
                                         'entry name and put in the "{}" folder'.format(OSConfig.MOUNTPOINT_FOLDER))
         optional_args_group.add_argument('-mn', '--mount-name', dest = 'mount_name',
