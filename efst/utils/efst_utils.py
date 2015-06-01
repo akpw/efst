@@ -214,14 +214,18 @@ class UniquePartialMatchList(list):
             <partialMatch> is found if it either:
                 equals to an element or is contained by exactly one element
         '''
-        matched_cnt = 0
+        matched_cnt, unique_match = 0, None
         matched_items = self._matched_items(partialMatch)
-        for matched, exact_match in matched_items:
+        for match, exact_match in matched_items:
             if exact_match:
-                return matched[0]
+                # found exact match
+                return match
             else:
+                # found a partial match
+                if not unique_match:
+                    unique_match = match
                 matched_cnt += 1
-        return matched_items[0][0] if matched_cnt == 1 else None
+        return unique_match if matched_cnt == 1 else None
 
     def __contains__(self, partialMatch):
         ''' Check if <partialMatch> is contained by an element in the list,

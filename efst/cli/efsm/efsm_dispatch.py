@@ -103,6 +103,7 @@ class EFSMDispatcher(EFSTDispatcher):
     def mount_entry(self, args):
         ''' Mounts a registered EncFS entry
         '''
+        print(args['entry_name'])
         mount_entry = config_handler.entry(args['entry_name'])
 
         pwd, new_pwd = PasswordHandler.get_pwd(mount_entry.pwd_entry)
