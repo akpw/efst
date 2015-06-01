@@ -199,24 +199,20 @@ class UniquePartialMatchList(list):
             >> 'Another longs string'
     '''
     def _matched_items(self, partialMatch):
+        ''' Generator expression of <matched items>, where <matched item> is
+            a tuple of (<matched_element>, <is_exact_match>)
+        '''
         def _contains_or_equal(item):
             if isinstance(item, Iterable):
                 return (partialMatch in item)
             else:
                 return (partialMatch == item)
-        return [(item, (partialMatch == item)) for item in self if _contains_or_equal(item)]
-
-    def __contains__(self, partialMatch):
-        ''' Check if <partialMatch> is contained by an element in the list,
-            where <contained> is defined either as:
-                either equals to element or contained by exactly one element
-        '''
-        return True if self.find(partialMatch) else False
+        return ((item, (partialMatch == item)) for item in self if _contains_or_equal(item))
 
     def find(self, partialMatch):
         ''' Returns the element in which <partialMatch> can be found
-            <partialMatch> will be found if it either:
-                equals to an element or contained by exactly one element
+            <partialMatch> is found if it either:
+                equals to an element or is contained by exactly one element
         '''
         matched_cnt = 0
         matched_items = self._matched_items(partialMatch)
@@ -227,3 +223,9 @@ class UniquePartialMatchList(list):
                 matched_cnt += 1
         return matched_items[0][0] if matched_cnt == 1 else None
 
+    def __contains__(self, partialMatch):
+        ''' Check if <partialMatch> is contained by an element in the list,
+            where <contained> is defined either as:
+                either "equals to element" or "contained by exactly one element"
+        '''
+        return True if self.find(partialMatch) else False
