@@ -14,7 +14,7 @@
 
 import os
 from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, EntryTypes
+from efst.config.efst_config import config_handler, EntryTypes, EFSTConfigKeys
 from efst.cli.efst.efst_dispatch import EFSTDispatcher
 from efst.cli.efsm.efsm_options import EFSMOptionsParser, EFSMCommands
 from efst.utils.efst_utils import PasswordHandler
@@ -42,6 +42,9 @@ class EFSMDispatcher(EFSTDispatcher):
                     self.register_entry(args, EntryTypes.PlainText)
                 else:
                     self.register_entry(args, EntryTypes.CipherText)
+
+            elif args['sub_cmd'] == EFSMCommands.SHOW:
+                self.show_entry(args)
 
             elif args['sub_cmd'] == EFSMCommands.UNREGISTER:
                 self.unregister_entry(args)
@@ -87,6 +90,16 @@ class EFSMDispatcher(EFSTDispatcher):
                                                         encfs_dir_path = args['backend_path'],
                                                         mount_dir_path = args['mountpoint_path'],
                                                         mount_name = args['mount_name'])
+
+    def show_entry(self, args):
+        entry = config_handler.entry(args['entry_name'])
+        print('Entry name: {}'.format(args['entry_name']))
+        print('\tEntry type: {}'.format('Plaintext' if entry.entry_type == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
+        print('\tPassword store entry: {}'.format(entry.pwd_entry))
+        print('\tConf/Key file: {}'.format(entry.encfs_config_path))
+        print('\tBack-end store folder: {}'.format(entry.encfs_dir_path))
+        print('\tMount folder: {}'.format(entry.mount_dir_path))
+        print('\tVolume name: {}'.format(entry.volume_name))
 
     def unregister_entry(self, args):
         ''' Un-Registers EncFS entry

@@ -23,6 +23,7 @@ from efst.utils.efst_utils import FSHelper, UniqueDirNamesChecker, UniquePartial
 class EFSMCommands(EFSTCommands):
     CREATE = 'create'
     REGISTER = 'register'
+    SHOW = 'show'
     UNREGISTER = 'unregister'
     MOUNT = 'mount'
     UMOUNT = 'umount'
@@ -33,6 +34,7 @@ class EFSMCommands(EFSTCommands):
                         '{}, '.format(cls.CREATE),
                         '{}, '.format(cls.REGISTER),
                         '{}, '.format(cls.UNREGISTER),
+                        '{}, '.format(cls.SHOW),
                         '{}, '.format(cls.MOUNT),
                         '{}, '.format(cls.UMOUNT),
                         '{}, '.format(cls.INFO),
@@ -83,23 +85,34 @@ class EFSMOptionsParser(EFSTOptionsParser):
                                    formatter_class=EFSTHelpFormatter)
         self._add_entry_groups(register_parser, action_type = ConfKeyActionType.Register)
 
+        # Show
+        show_parser = subparsers.add_parser(EFSMCommands.SHOW,
+                                   description = 'Shows a registered EncFS entry',
+                                             formatter_class=EFSTHelpFormatter)
+        required_args_group = show_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of entry to show")
+
+
         # Unregister
         unregister_parser = subparsers.add_parser(EFSMCommands.UNREGISTER,
                                    description = 'Removes a registered EncFS entry',
                                              formatter_class=EFSTHelpFormatter)
-        self._add_entry_name(unregister_parser, registered_only = True, help = "Name of entry to unregister")
+        required_args_group = unregister_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of entry to unregister")
 
         # Mount
         mount_parser = subparsers.add_parser(EFSMCommands.MOUNT,
                                              description = 'Mounts a registered EncFS entry',
                                              formatter_class=EFSTHelpFormatter)
-        self._add_entry_name(mount_parser, registered_only = True, help = "Name of registered entry to mount")
+        required_args_group = mount_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of registered entry to mount")
 
         # Umount
         umount_parser = subparsers.add_parser(EFSMCommands.UMOUNT,
                                              description = 'Un-mounts a registered EncFS entry',
                                              formatter_class=EFSTHelpFormatter)
-        self._add_entry_name(umount_parser, registered_only = True, help = "Name of registered entry to un-mount")
+        required_args_group = umount_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of registered entry to un-mount")
 
 
     # Options checking
@@ -128,7 +141,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
 
             if args['sub_cmd'] in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
                 if args['entry_name'] in (config_handler.registered_entries()):
-                    print('Entry Name already registered: \n\t{}'.format(args['entry_name']))
+                    entry = config_handler.entry(args['entry_name'])
+                    print('"{0}": entry name already registered in the {1} Entries section'.format(args['entry_name'],
+                        'Plaintext' if entry.entry_type == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
                     parser.exit()
 
                 if not args['mountpoint_path']:
