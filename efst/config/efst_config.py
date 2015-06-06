@@ -16,7 +16,7 @@ from collections import namedtuple
 from configobj import ConfigObj
 from pkg_resources import Requirement, resource_filename
 from efst.utils.efst_utils import FSHelper
-from efst.encfs.encfs_handler import EncFSHandler
+from efst.encfs.encfs_cfg import EncFSCFG
 
 
 ''' EFST conf file handling
@@ -55,6 +55,8 @@ class EFSTConfigKeys:
 
     # EncFS Config Entry Keys
     DEFAULT_CFG_ENTRY_KEY = 'EFSTConfigDefault'
+    BOXCRYPTOR_COMPATIBLE_CFG_ENTRY_KEY = 'BoxcryptorCompatible'
+
     CIPHER_ALG = 'cipherAlg'
     KEY_SIZE = 'keySize'
     BLOCK_SIZE = 'blockSize'
@@ -93,6 +95,7 @@ class EFSTConfigHandler:
         self.config = ConfigObj(lookup_path)
 
     # EFST entries
+    ##############
     def register_entry(self, entry_name, entry_type, pwd_entry,
                             conf_path, encfs_dir_path, mount_dir_path, mount_name):
         ''' Registers EFST conf entry
@@ -153,6 +156,7 @@ class EFSTConfigHandler:
         return entry
 
     # EncFS Config entries
+    #######################
     def registered_encfs_cfg_entries(self):
         ''' All EncFS registered configurations
         '''
@@ -183,6 +187,8 @@ class EFSTConfigHandler:
         if not entry_name in self.registered_encfs_cfg_entries():
             print('"{0}": EncFS conf. entry not registered'.format(entry_name))
             return False
+        elif entry_name in (EFSTConfigKeys.DEFAULT_CFG_ENTRY_KEY, EFSTConfigKeys.BOXCRYPTOR_COMPATIBLE_CFG_ENTRY_KEY):
+            print('"{0}": Can not unregister a predefined EncFS conf. entry'.format(entry_name))
         else:
             del(self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name])
             self.config.write()
@@ -199,7 +205,7 @@ class EFSTConfigHandler:
 
         if cfg_entry_name in self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY]:
             entry_reader = self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][cfg_entry_name]
-            entry = EncFSHandler.EncFSCfgEntry(
+            entry = EncFSCFG.EncFSCfgEntry(
                         entry_reader.get(EFSTConfigKeys.CIPHER_ALG),
                         entry_reader.get(EFSTConfigKeys.KEY_SIZE),
                         entry_reader.get(EFSTConfigKeys.BLOCK_SIZE),

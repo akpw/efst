@@ -14,17 +14,13 @@
 import os
 from enum import IntEnum
 from efst.cli.efst.efst_options import EFSTOptionsParser, EFSTHelpFormatter, EFSTCommands
-from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, OSConfig, EFSTConfigKeys
+from efst.encfs.encfs_cfg import EncFSCFG
+from efst.config.efst_config import config_handler, OSConfig, EFSTConfigKeys, EntryTypes
 from efst.utils.efst_utils import FSHelper, UniqueDirNamesChecker, UniquePartialMatchList
-
 
 
 class EFSMCommands(EFSTCommands):
     CREATE = 'create'
-    REGISTER = 'register'
-    SHOW = 'show'
-    UNREGISTER = 'unregister'
     MOUNT = 'mount'
     UMOUNT = 'umount'
 
@@ -57,8 +53,8 @@ class EFSMOptionsParser(EFSTOptionsParser):
         self._description = \
     '''
     EFSM is a part of EFST tools. It enables creating
-    new / registering existing EncFS back-end stores,
-    and then easily manipulate corresponding
+    new and registering existing EncFS back-end stores,
+    to then easily manipulate corresponding
     ciphered / plaintext views.
     '''
 
@@ -143,7 +139,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
                 if args['entry_name'] in (config_handler.registered_entries()):
                     entry = config_handler.entry(args['entry_name'])
                     print('"{0}": entry name already registered in the {1} Entries section'.format(args['entry_name'],
-                        'Plaintext' if entry.entry_type == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
+                        'Plaintext' if entry.entry_type == EntryTypes.PlainText else 'CipherText'))
                     parser.exit()
 
                 if not args['mountpoint_path']:
@@ -157,7 +153,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
                     args['mount_name'] = args['entry_name']
 
                 # conf/key path
-                default_cfg_path = os.path.join(args['backend_path'], EncFSHandler.DEFAULT_CFG_FNAME)
+                default_cfg_path = os.path.join(args['backend_path'], EncFSCFG.DEFAULT_CFG_FNAME)
                 if not args['conf_path']:
                     # if no conf path specified, try out the default
                     args['conf_path'] = default_cfg_path
@@ -211,8 +207,8 @@ class EFSMOptionsParser(EFSTOptionsParser):
                         else (lambda bpath: cls._is_valid_dir_path(parser, bpath)),
             required = True,
             help = 'Path to the back-end store folder. ' \
-                'The backend folder typically contains your ciphered data, for which a plaintext view folder is set up and registered.' \
-                'That can reversed via using "--reverse" switch, which results in an on-demand ciphered view for your plaintext back-end data')
+                'The backend folder typically contains your ciphered data, for which a plaintext view folder is set up and registered. ' \
+                'That can reversed via the "--reverse" switch, which results in an on-demand ciphered view for your plaintext back-end data')
 
         optional_args_group = parser.add_argument_group('Additional Arguments')
         optional_args_group.add_argument('-cp', '--conf-path', dest = 'conf_path',

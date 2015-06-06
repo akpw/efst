@@ -94,7 +94,9 @@ class EFSMDispatcher(EFSTDispatcher):
     def show_entry(self, args):
         entry = config_handler.entry(args['entry_name'])
         print('Entry name: {}'.format(args['entry_name']))
-        print('\tEntry type: {}'.format('Plaintext' if entry.entry_type == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
+        print('\tEntry type: {}'.format('Plaintext' \
+                                if entry.entry_type == EntryTypes.PlainText \
+                                else 'CipherText'))
         print('\tPassword store entry: {}'.format(entry.pwd_entry))
         print('\tConf/Key file: {}'.format(entry.encfs_config_path))
         print('\tBack-end store folder: {}'.format(entry.encfs_dir_path))

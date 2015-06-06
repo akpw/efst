@@ -21,6 +21,9 @@ from efst.config.efst_config import EFSTConfigKeys
 class EFSTCommands:
     VERSION = 'version'
     INFO = 'info'
+    SHOW = 'show'
+    REGISTER = 'register'
+    UNREGISTER = 'unregister'
 
     @classmethod
     def commands_meta(cls):
@@ -37,10 +40,9 @@ class EFSTOptionsParser:
         self._description = \
     '''
     Encrypted File System tools help secure your data with
-    Filesystem (EncFS). It provides two main tools,
-    EFS Mounter and EFS Config.
+    Filesystem (EncFS).
 
-    For more information, run:
+    For more information on provided tools, run:
         $ efsm -h
         $ efsc -h
     '''
@@ -106,7 +108,7 @@ class EFSTOptionsParser:
 
     @property
     def _default_command(self):
-        ''' If no command was specified, can add a default one here
+        ''' If no command was specified, print INFO by default
         '''
         return EFSTCommands.INFO
 
