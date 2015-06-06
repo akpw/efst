@@ -26,7 +26,7 @@ class EncFSHandler:
         '''
         with temp_dir() as tmp_encfs:
             with temp_dir() as tmp_mount:
-                cmd = EncFSHandler._build_cmd(encfs_dir_path = tmp_encfs, mount_dir_path = tmp_mount)
+                cmd = EncFSCommands.build_cmd(encfs_dir_path = tmp_encfs, mount_dir_path = tmp_mount)
 
                 EncFSCommands.run_expectant_cmd(cmd, cfg_entry, pwd)
                 EncFSHandler.umount(tmp_mount, quiet = True)
