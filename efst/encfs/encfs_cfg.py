@@ -11,6 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
+import os
 from enum import Enum, unique
 from collections import namedtuple
 
@@ -131,5 +132,52 @@ class EncFSNameAlg(EncFSAlgorithms):
     Stream  = 4
 
 
+class EncFSUtils:
+    ''' EncFS Utils
+    '''
+    @staticmethod
+    def encfs_installed():
+        """ Checks if encfs is installed and in system PATH
+        """
+        if os.name == 'nt':
+            print('Windows OS is not supported')
+        else:
+            encfs_app_name = 'encfs'
+            for path in os.environ['PATH'].split(os.pathsep):
+                app_path = os.path.join(path, encfs_app_name)
+                if os.path.isfile(app_path) and os.access(app_path, os.X_OK):
+                    return True
+        return False
 
 
+class EncFSNotInstalled(Exception):
+    def __init__(self, message = None):
+        super().__init__(message if message is not None else self.default_message)
+
+    @property
+    def default_message(self):
+        if os.name == 'nt':
+            msg = \
+        '''
+        Windows OS is not currently supported.
+
+        To work with files encrypted with EFST on
+
+        supported platforms, use Windows EncFS-compatible
+
+        software like Boxcryptor or encfs4win.
+
+        '''
+        else:
+            msg = \
+        '''
+
+        Looks like EncFS is not installed.
+
+        Please install EncFS and make it
+
+        available in the command line.
+
+        '''
+
+        return msg

@@ -12,6 +12,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
+import efst.cli.efst.vchk
 import sys
 from distutils.util import strtobool
 from efst.utils.efst_utils import PasswordHandler

@@ -30,7 +30,7 @@ class EntryTypes(IntEnum):
 
 
 class OSConfig:
-    ''' OS specifics
+    ''' OS-related
     '''
     MOUNTPOINT_FOLDER = "/Volumes"
 
