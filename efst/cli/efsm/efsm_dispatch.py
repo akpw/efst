@@ -13,9 +13,9 @@
 ## GNU General Public License for more details.
 
 import os
+from efst.cli.efst.efst_dispatch import EFSTDispatcher
 from efst.encfs.encfs_handler import EncFSHandler
 from efst.config.efst_config import config_handler, EntryTypes, EFSTConfigKeys
-from efst.cli.efst.efst_dispatch import EFSTDispatcher
 from efst.cli.efsm.efsm_options import EFSMOptionsParser, EFSMCommands
 from efst.utils.efst_utils import PasswordHandler
 
