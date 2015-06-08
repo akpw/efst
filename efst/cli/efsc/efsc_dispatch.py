@@ -49,9 +49,9 @@ class EFSCDispatcher(EFSTDispatcher):
 
     # Dispatched methods
     def show_cfg_entry(self, args):
-        entry = config_handler.encfs_cfg_entry(args['entry_name'])
+        entry = config_handler.encfs_cfg_entry(args['config_entry'])
         enable_tr = lambda letter: 'Enabled' if letter.lower() == 'y' else 'Disabled'
-        print('Entry name: {}'.format(args['entry_name']))
+        print('Entry name: {}'.format(args['config_entry']))
         print('\tCipher Algorithm: {}'.format(EncFSCipherAlg.alg_name_by_type(entry.cipherAlg)))
         print('\tKey Size: {}'.format(entry.keySize))
         print('\tBlock Size: {}'.format(entry.blockSize))
@@ -75,11 +75,11 @@ class EFSCDispatcher(EFSTDispatcher):
                     args['blockMACRandBytes'],
                     entry_tr(not args['disable_holes']))
 
-        config_handler.register_encfs_cfg_entry(args['entry_name'], entry_conf)
+        config_handler.register_encfs_cfg_entry(args['config_entry'], entry_conf)
 
 
     def unregister_cfg_entry(self, args):
-        config_handler.unregister_encfs_cfg_entry(args['entry_name'])
+        config_handler.unregister_encfs_cfg_entry(args['config_entry'])
 
 
 

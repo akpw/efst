@@ -144,7 +144,7 @@ class EFSTOptionsParser:
                         default = EFSTConfigKeys.DEFAULT_CFG_ENTRY_KEY,
                         choices = UniquePartialMatchList(
                                         config_handler.registered_encfs_cfg_entries()),
-                        help = 'A preset configuration for creating EncFS configuration/key file')
+                        help = 'A registered EFST config entry for creating EncFS config/key files')
 
     @staticmethod
     def _add_version(parser):

@@ -40,8 +40,9 @@ class EFSCOptionsParser(EFSTOptionsParser):
         self._script_name = 'EFSM'
         self._description = \
     '''
-    EFSC is a part of EFST tools. It enables creating
-    EncFS conf/key files and managing related EncFS presetes.
+        EFSC is a part of EFST tools. It helps create
+        EncFS conf/key files and manage related
+        EFST config. entries
     '''
 
     # Options parsing
@@ -65,19 +66,19 @@ class EFSCOptionsParser(EFSTOptionsParser):
         self._add_config_entry(create_key_parser)
 
 
-        # Show EncFS CFG Preset
+        # Show EFST Config Entry
         show_parser = subparsers.add_parser(EFSCCommands.SHOW,
-                                   description = 'Shows a registered EncFS Preset entry',
+                                   description = 'Shows a registered EFST Config entry',
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = show_parser.add_argument_group('Required Arguments')
-        self._add_cfg_entry_name(required_args_group, registered_only = True, help = "Name of EncFS Preset entry to show")
+        self._add_cfg_entry_name(required_args_group, registered_only = True, help = "Name of EFST Config entry to show")
 
-        # Register EncFS Preset
+        # Register EFST Config
         register_parser = subparsers.add_parser(EFSCCommands.REGISTER,
-                                   description = 'Registers an EncFS preset entry',
+                                   description = 'Registers an EFST config entry',
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = register_parser.add_argument_group('Required Arguments')
-        self._add_cfg_entry_name(required_args_group, registered_only = False, help = "Name of EncFS Preset Entry to register")
+        self._add_cfg_entry_name(required_args_group, registered_only = False, help = "Name of EFST Config Entry to register")
 
         optional_args_group = register_parser.add_argument_group('Additional Arguments')
         optional_args_group.add_argument('-ca', '--cipher-algorithm', dest = 'cipher_algorithm',
@@ -127,12 +128,12 @@ class EFSCOptionsParser(EFSTOptionsParser):
                     action='store_true')
 
 
-        # Un-Register EncFS Preset
+        # Un-Register EFST Config
         unregister_parser = subparsers.add_parser(EFSCCommands.UNREGISTER,
-                                   description = 'Un-rRegisters an EncFS preset entry',
+                                   description = 'Un-registers an EFST config entry',
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = unregister_parser.add_argument_group('Required Arguments')
-        self._add_cfg_entry_name(required_args_group, registered_only = True, help = "Name of EncFS Preset entry to unregister")
+        self._add_cfg_entry_name(required_args_group, registered_only = True, help = "Name of EFST Config entry to unregister")
 
 
     # Options checking
@@ -140,18 +141,25 @@ class EFSCOptionsParser(EFSTOptionsParser):
         ''' Validation of supplied CLI commands
         '''
         super()._check_cmd_args(args, parser)
-        if args['sub_cmd'] == EFSCCommands.CREATE_KEY:
-            if os.path.exists(args['conf_path']):
-                # if target path is directory, compile default file name
-                if os.path.isdir(args['conf_path']):
-                    args['conf_path'] = os.path.join(args['conf_path'], EncFSCFG.DEFAULT_CFG_FNAME)
-                else:
-                    print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
-                    parser.exit()
+        if args['sub_cmd'] in (EFSCCommands.SHOW, EFSCCommands.UNREGISTER, EFSCCommands.CREATE_KEY):
+            # Registered Entry name could be a partial match, need to expand
+            args['config_entry'] = UniquePartialMatchList(
+                                        config_handler.registered_encfs_cfg_entries()).find(args['config_entry'])
 
+            # Create Key
+            if args['sub_cmd'] == EFSCCommands.CREATE_KEY:
+                if os.path.exists(args['conf_path']):
+                    # if target path is directory, compile default file name
+                    if os.path.isdir(args['conf_path']):
+                        args['conf_path'] = os.path.join(args['conf_path'], EncFSCFG.DEFAULT_CFG_FNAME)
+                    else:
+                        print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
+                        parser.exit()
+
+        # Register an EncFS Config
         elif args['sub_cmd'] in EFSCCommands.REGISTER:
-            if args['entry_name'] in (config_handler.registered_encfs_cfg_entries()):
-                print('"{0}": entry name already registered'.format(args['entry_name']))
+            if args['config_entry'] in (config_handler.registered_encfs_cfg_entries()):
+                print('"{0}": entry name already registered'.format(args['config_entry']))
                 parser.exit()
 
             # algorithms
@@ -170,12 +178,6 @@ class EFSCOptionsParser(EFSTOptionsParser):
                 print(EncFSCipherAlg.block_size_msg(alg_type = args['cipher_algorithm']))
                 parser.exit()
 
-        elif args['sub_cmd'] in (EFSCCommands.SHOW, EFSCCommands.UNREGISTER):
-            # Registered Entry name could be a partial match, need to expand
-            args['entry_name'] = UniquePartialMatchList(
-                                        config_handler.registered_encfs_cfg_entries()).find(args['entry_name'])
-
-
     @property
     def _default_command(self):
         ''' Default to showing help
@@ -184,8 +186,8 @@ class EFSCOptionsParser(EFSTOptionsParser):
 
     # Helpers
     @staticmethod
-    def _add_cfg_entry_name(parser, registered_only = False, help = 'EncFS Preset Entry name'):
-        parser.add_argument('-en', '--entry-name', dest = 'entry_name',
+    def _add_cfg_entry_name(parser, registered_only = False, help = 'EncFS Config Entry name'):
+        parser.add_argument('-ce', '--config-entry', dest = 'config_entry',
                         type = str,
                         metavar = config_handler.registered_encfs_cfg_entries() if registered_only else None,
                         required = True,
