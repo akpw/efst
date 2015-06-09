@@ -2,6 +2,7 @@
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
 - [EncFS](https://github.com/vgough/encfs) installed and available on the command line
 - OSs: 
+
     . Mac OSX:  supported, tested
     . Linux :   supported, testing TDB
     . Windows:  TBD / maybe
