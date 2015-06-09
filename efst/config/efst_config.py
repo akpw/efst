@@ -114,8 +114,8 @@ class EFSTConfigHandler:
                     EFSTConfigKeys.VOLUME_NAME_KEY: mount_name }
             self.config.write()
             print('{0} Entry registered: {1}'.format(
-                            'Plaintext' if entry_key == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY
-                                                                        else 'CipherText', entry_name))
+                            'CipherText' if entry_key == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY
+                                                                        else 'Plaintext', entry_name))
 
     def unregister_entry(self, entry_name):
         ''' Un-registers EFST conf entry

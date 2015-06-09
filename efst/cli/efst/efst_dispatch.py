@@ -71,7 +71,7 @@ class EFSTDispatcher:
 
     # Internal helpers
     def _store_pwd(self, pwd, pwd_entry):
-        answer = input('Do you want to securily store the password for futher use? [y/n]: ')
+        answer = input('Do you want to securily store the password for later use? [y/n]: ')
         try:
             answer = strtobool(answer)
         except ValueError:
