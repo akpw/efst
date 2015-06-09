@@ -48,7 +48,7 @@ To review all of these in detail, let's take a look at the relevant EFST config 
 ```
 
 The password store entry here is the name of the new Mac OS Keychain password entry:
-
+![efst-keychain](https://lh3.googleusercontent.com/282RqTvZ21GYqGawl7CSgBPhI5PkXaIW6eaF6hJGCnI=w539-h361-no)
 
 From now on, working with the protected data is straightforward:
 '''
