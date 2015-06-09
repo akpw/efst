@@ -1,7 +1,7 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
 - [EncFS](https://github.com/vgough/encfs) installed and available on the command line
-- OS: Mac OSX or Linux (Windows TBD, maybe)
+- OS: Mac OSX or Linux (Windows TBD/maybe)
 
 
 ####Install:
@@ -11,31 +11,30 @@
 
 ##Description
 
-[EncFS](https://github.com/vgough/encfs) is a free [FUSE-based](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) cryptographic file system. It transparently encrypts files, using a selected back-end directory as storage for the encrypted files. EncFS works on per-file basis, which makes it suitable for syncing files and a great agreat fit for protecting cloud data.
+[EncFS](https://github.com/vgough/encfs) is a free [FUSE-based](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) cryptographic file system. It transparently encrypts files, using a selected directory as back-end storage for the encrypted files. EncFS works on per-file basis, which makes it suitable for syncing files and a great fit for protecting cloud data.
 
-EFST help manage EncFS-encrypted data, making it easy to create / register all nessesery EncFS assets and then effectively operate it via a few simple commands. In addition to common operation such as mounting / unmounting EncFS volumes, EFST automates and simplifies advanced EncFS features such as reverse encryption for encrypted backups or multiple interleaved EncFS file systems for plausible deniablity.
+EFST help manage EncFS-encrypted data, making it easy to create / register all nessesery EncFS assets and then effectively operate it via a few simple commands. In addition to common operation such as mounting / unmounting EncFS volumes, EFST simplifies and automates advanced EncFS features such as reverse encryption for encrypted backups or multiple interleaved EncFS file systems for plausible deniablity.
 
 The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of two main command-line utilities.
 
-[**EFSM**](https://github.com/akpw/batch-mp-tools#tagger) enables creating / registering EncFS
-back-end stores and all its related assests such as target mountpoint path, mount volume name, path to config/key file, etc. and then easily switch between ciphertext / plaintext views of the data,
+[**EFSM**](https://github.com/akpw/batch-mp-tools#tagger) enables creating / registering / operating EncFS back-end stores and all its related assests such as target mountpoint path, mount volume name, path to config/key file, etc. 
 One way to learn about available EFSM optons would obviously be via running:
 ```
     $ efsm -h
 
 ```
 
-As a more practical approach, lets quickly create and handle a basic encrypted Dropbox folder:
+As a more practical approach, lets just quickly create and handle a basic encrypted Dropbox folder:
 ```
     $ efsm create -en SecretDropBoxFolder -bp ~/Dropbox/.my_secret_folder
-    Enter password: **************
-    Confirm password: **************
+    Enter password: 
+    Confirm password:
     Creating EncFS backend store...
     Do you want to securily store the password for further use? [y/n]: y
     CipherText Entry registered: SecretDropBoxFolder
 ```
 
-A single simple command did quite a few things there. A backend directory for storing the encrypted files has been created, an EncFS config/key file was generated, default values has been figured out and finally a password was collected, set and stored in your OS-specific secure keychain.
+A single simple command did quite a few things there. A backend directory for storing the encrypted files has been created, an EncFS config/key file was generated, default values has been figured out and finally a password was collected from input, set, and stored in your OS-specific secure keychain.
 To review all of these in detail, let's take a look at the relevant EFST config entry:
 ```
     $ efsm show -en Se
@@ -46,9 +45,9 @@ To review all of these in detail, let's take a look at the relevant EFST config 
         Back-end store folder: /Users/AKPW/Dropbox/.my_secret_folder
         Mount folder: /Volumes/SecretDropBoxFolder
         Volume name: SecretDropBoxFolder
-'''
+```
 
-The password store entry here is the name of the new Mac OS Keychain password entry.
+The password store entry here is the name of the new Mac OS Keychain password entry:
 
 
 From now on, working with the protected data is straightforward:
