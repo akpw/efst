@@ -141,7 +141,7 @@ To keep things simple, I'll be off-loading more advanced used-cases to later blo
 ##Full description of CLI Commands
 ###efsm
 
-    EFSM enables creating new and registering existing EncFS backend stores, to then 
+    EFSM enables creating new and registering existing EncFS backends, to then 
     easily manipulate corresponding ciphertext / plaintext views.
       . action commands:
         .. create       Sets up and register a new EncFS backend along with its related assets
@@ -153,7 +153,7 @@ To keep things simple, I'll be off-loading more advanced used-cases to later blo
         .. info         Shows info about the EFSM utility
         .. version      Shows EFST version
 
-    Usage: EFSM [-h]
+    Usage: $ efsm [-h]
                     {create, register, unregister, show, mount, umount, info, version}
       Commands:
         {create, register, unregister, show, mount, umount, info, version}
@@ -172,7 +172,7 @@ To keep things simple, I'll be off-loading more advanced used-cases to later blo
         .. info         Shows info about the EFSC utility
         .. version      Shows EFST version
 
-    Usage: EFSM [-h]
+    Usage: $ efsc [-h]
                     {create-key, register, show, unregister, info, version}
       Commands:
         {create-key, register, show, unregister, info, version}
