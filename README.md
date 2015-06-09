@@ -47,7 +47,8 @@ To review all of these in detail, let's take a look at the relevant EFST config 
         Volume name: SecretDropBoxFolder
 ```
 
-The password store entry here is the name of the automatically created OS-specific keychain entry. Since I ran the ````efsm create```` command on my Mac, here is the relevant Mac OS keychain entry:
+The password store entry is the default name of automatically created OS-specific keychain entry. Since I ran the ````efsm create```` command on my Mac, here it is the Mac OS keychain app:
+
 ![efst-keychain](https://lh3.googleusercontent.com/HXtJUhzr5Hiq8XNmofy0kF_VX4mtkd0CeA_4F_3oDqc=w532-h346-no)
 
 
@@ -66,6 +67,7 @@ Unmounting the plaintext view is just as easy:
 ```
 
 Now the data are stored on your computer (and Dropbox) in encrypted form, readily accessible whenever needed via the above 'efsm mount' command.
+
 
 
 [**EFSC**](https://github.com/akpw/efsm#efsc) is a EFST configuration tool.
