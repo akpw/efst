@@ -4,7 +4,7 @@
 - OSs: 
     * Mac OSX:  supported, tested
     * Linux :   supported, testing TDB
-    * Windows:  TBD / maybe
+    * Windows:  currently not supported, TBD / maybe
 
 
 ####Install:
