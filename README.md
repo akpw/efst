@@ -17,7 +17,7 @@ EFST help manage EncFS-encrypted data, making it easy to create / register all n
 
 The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of two main command-line utilities.
 
-[**EFSM**](https://github.com/akpw/batch-mp-tools#tagger) enables creating / registering / operating EncFS back-end stores and all its related assests such as target mountpoint path, mount volume name, path to config/key file, etc. 
+[**EFSM**](https://github.com/akpw/efsm#efsm) enables creating / registering / operating EncFS back-end stores and all its related assests such as target mountpoint path, mount volume name, path to config/key file, etc. 
 One way to learn about available EFSM optons would obviously be via running:
 ```
     $ efsm -h
@@ -67,7 +67,7 @@ Unmounting the plaintext view is just as easy:
 Now the data are stored on your computer (and Dropbox) in encrypted form, readily accessible whenever needed via the above 'efsm mount' command.
 
 
-[**EFSC**](https://github.com/akpw/efsm#efsm) is a EFST configuration tool.
+[**EFSC**](https://github.com/akpw/efsm#efsc) is a EFST configuration tool.
 ```
     $ efsc -h
 ```
