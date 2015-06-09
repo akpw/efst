@@ -25,9 +25,9 @@ class EFSCCommands(EFSTCommands):
     def commands_meta(cls):
         return ''.join(('{',
                         '{}, '.format(cls.CREATE_KEY),
-                        '{}, '.format(cls.SHOW),
                         '{}, '.format(cls.REGISTER),
                         '{}, '.format(cls.UNREGISTER),
+                        '{}, '.format(cls.SHOW),
                         '{}, '.format(cls.INFO),
                         '{}'.format(cls.VERSION),
                         '}'))
