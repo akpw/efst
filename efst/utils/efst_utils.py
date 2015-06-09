@@ -62,7 +62,7 @@ class FSHelper:
         # for files, check that the parent dir exists
         if check_parent_path:
             if not os.access(os.path.dirname(path), os.W_OK):
-                print('Non-valid path:\n\t "{}"'.format(path))
+                print('Non-valid folder path:\n\t "{}"'.format(os.path.dirname(path)))
                 sys.exit(1)
 
         return path if path else None
