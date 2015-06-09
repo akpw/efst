@@ -10,7 +10,7 @@
 ####Install:
 - latest from source repository: `$ pip install git+https://github.com/akpw/efst.git`
 
-####Blogs:
+####Blog:
    * TBD
 
 ##Description
