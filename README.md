@@ -1,13 +1,17 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
 - [EncFS](https://github.com/vgough/encfs) installed and available on the command line
-- OS: Mac OSX or Linux (Windows TBD/maybe)
+- OSs: 
+    * Mac OSX:  supported, tested
+    * Linux :   supported, testing TDB
+    * Windows:  currently not supported, TBD / maybe
 
 
 ####Install:
 - latest from source repository: `$ pip install git+https://github.com/akpw/efst.git`
 
-####Blogs:
+####Blog:
+   * TBD
 
 ##Description
 
@@ -140,8 +144,10 @@ To keep things simple, I'll be off-loading more advanced used-cases to later blo
 
 ##Full description of CLI Commands
 ###efsm
-EFSM enables creating new and registering existing EncFS backend stores, to then easily manipulate corresponding ciphertext / plaintext views.
-    . action commands:
+
+    EFSM enables creating new and registering existing EncFS backends, to then 
+    easily manipulate corresponding ciphertext / plaintext views.
+      . action commands:
         .. create       Sets up and register a new EncFS backend along with its related assets
         .. register     Registers an existing EncFS backend along with its related assets
         .. unregister   Un-registers an EncFS backend
@@ -151,7 +157,7 @@ EFSM enables creating new and registering existing EncFS backend stores, to then
         .. info         Shows info about the EFSM utility
         .. version      Shows EFST version
 
-    Usage: EFSM [-h]
+    Usage: $ efsm [-h]
                     {create, register, unregister, show, mount, umount, info, version}
       Commands:
         {create, register, unregister, show, mount, umount, info, version}
@@ -159,10 +165,10 @@ EFSM enables creating new and registering existing EncFS backend stores, to then
         $ efsc {command} -h  #run this for detailed help on individual commands
 
 
-
 ###efsc
-EFSC helps create EncFS conf/key files and manage related EFST config. entries
-    . action commands:
+
+    EFSC helps create EncFS conf/key files and manage related EFST config. entries
+      . action commands:
         .. create-key   Creates EncFS conf/key file at a specified location
         .. register     Registers an EFST config entry
         .. unregister   Un-registers an EFST config entry
@@ -170,7 +176,7 @@ EFSC helps create EncFS conf/key files and manage related EFST config. entries
         .. info         Shows info about the EFSC utility
         .. version      Shows EFST version
 
-    Usage: EFSM [-h]
+    Usage: $ efsc [-h]
                     {create-key, register, show, unregister, info, version}
       Commands:
         {create-key, register, show, unregister, info, version}
