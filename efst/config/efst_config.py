@@ -11,6 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
+import sys
 from enum import IntEnum
 from collections import namedtuple
 from configobj import ConfigObj
@@ -27,12 +28,6 @@ class EntryTypes(IntEnum):
     '''
     CipherText = 0
     PlainText = 1
-
-
-class OSConfig:
-    ''' OS-related
-    '''
-    MOUNTPOINT_FOLDER = "/Volumes"
 
 
 class EFSTConfigKeys:
@@ -87,12 +82,29 @@ class ConfigEntries:
                                                     'encfs_dir_path', 'mount_dir_path', 'volume_name'])
 
 
+class OSConfig:
+    ''' OS-related
+    '''
+    MOUNTPOINT_FOLDER = "/mnt"
+
+class OSXConfig(OSConfig):
+    MOUNTPOINT_FOLDER = "/Volumes"
+
+class LinuxConfig(OSConfig):
+    pass
+
 
 class EFSTConfigHandler:
     def __init__(self, lookup_path = None):
         if lookup_path is None:
             lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
         self.config = ConfigObj(lookup_path)
+
+        if sys.platform == 'linux':
+            self.os_config = LinuxConfig
+        elif sys.platform == 'darwin':
+            self.os_config = OSXConfig
+
 
     # EFST entries
     ##############
