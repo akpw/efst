@@ -33,8 +33,7 @@ class EncFSCommands:
                         ' {}'.format(shlex.quote(encfs_dir_path)),
                         ' {}'.format(shlex.quote(mount_dir_path)),
                         ' {0}{1}'.format(config_handler.os_config.volname_cmd, shlex.quote(mount_name)) \
-                                                    if config_handler.os_config.volname_cmd and mount_name else ''
-                        ' -o volname={}'.format(shlex.quote(mount_name)) if mount_name else ''
+                                                if (config_handler.os_config.volname_cmd and mount_name) else ''
                         ))
         return cmd.strip()
 
