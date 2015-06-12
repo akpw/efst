@@ -60,18 +60,21 @@ class EncFSCommands:
         child.expect('The following filename encoding algorithms are available')
         child.logfile_read = None
 
+        # filename encoding
+        name_alg = cfg_entry.nameAlg
         lines = output.getvalue().split('\n')
         for line in lines:
             if line.startswith('3. Stream'):
                 # Block32 not supported, need to adjust the numbering
-                if cfg_entry.nameAlg != EncFSNameAlg.Block.value:
-                    if cfg_entry.nameAlg == EncFSNameAlg.Block32.value:
+                if name_alg != EncFSNameAlg.Block.value:
+                    name_alg = int(name_alg)
+                    if name_alg == EncFSNameAlg.Block32.value:
                         # if Block32 was explicitly attempted, notify
                         print('Block32 file name encoding not supported')
                         print('Using Block file name encoding instead')
-                    cfg_entry.nameAlg = str(int(cfg_entry.nameAlg) - 1)
-
-        child.sendline(cfg_entry.nameAlg)
+                    name_alg -= 1
+                    name_alg = str(name_alg)
+        child.sendline(name_alg)
 
         child.expect('Enable filename initialization vector chaining')
         child.sendline(cfg_entry.chainedNameIV)
