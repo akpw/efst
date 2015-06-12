@@ -23,5 +23,6 @@ def check_encfs_installed():
         print(EncFSNotInstalled().default_message)
         sys.exit(0)
 
-# check
+# check encfs installed
 check_encfs_installed()
+

@@ -11,7 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-import os, sys, shlex, tempfile, shutil
+import os, sys, shlex, tempfile, shutil, re
 import subprocess
 import keyring, getpass
 from collections import Iterable
@@ -33,6 +33,21 @@ def run_cmd(cmd, shell = False):
     if proc.returncode != 0:
         raise CmdProcessingError(output)
     return output
+
+def get_last_digit_from_shell_cmd(cmd):
+    cmd_output = run_cmd(cmd, shell = True)
+
+    p = re.compile('(\d*\.?\d+)')
+    match = p.search(cmd_output)
+    if match:
+        return float(match.group())
+    else:
+        return -1
+
+def encfs_version():
+    cmd = 'encfs --version'
+    return get_last_digit_from_shell_cmd(cmd)
+
 
 @contextmanager
 def temp_dir():

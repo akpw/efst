@@ -11,7 +11,8 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-import sys, shlex, pexpect
+import sys, shlex, pexpect, io
+from efst.encfs.encfs_cfg import EncFSNameAlg
 
 ''' EncFS Commands Helpers
 '''
@@ -41,7 +42,6 @@ class EncFSCommands:
         print('Creating EncFS backend store...')
 
         child = pexpect.spawnu(cmd)
-        #child.logfile = sys.stdout
 
         child.expect('>')
         child.sendline('x')
@@ -55,7 +55,22 @@ class EncFSCommands:
         child.expect('filesystem block size')
         child.sendline(cfg_entry.blockSize)
 
+        output = io.StringIO()
+        child.logfile_read = output
         child.expect('The following filename encoding algorithms are available')
+        child.logfile_read = None
+
+        lines = output.getvalue().split('\n')
+        for line in lines:
+            if line.startswith('3. Stream'):
+                # Block32 not supported, need to adjust the numbering
+                if cfg_entry.nameAlg != EncFSNameAlg.Block.value:
+                    if cfg_entry.nameAlg == EncFSNameAlg.Block32.value:
+                        # if Block32 was explicitly attempted, notify
+                        print('Block32 file name encoding not supported')
+                        print('Using Block file name encoding instead')
+                    cfg_entry.nameAlg -= 1
+
         child.sendline(cfg_entry.nameAlg)
 
         child.expect('Enable filename initialization vector chaining')

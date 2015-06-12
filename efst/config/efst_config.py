@@ -11,7 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-import sys
+import os, sys
 from enum import IntEnum
 from collections import namedtuple
 from configobj import ConfigObj
@@ -83,9 +83,15 @@ class ConfigEntries:
 
 
 class OSConfig:
-    ''' OS-related
+    ''' OS-related config
     '''
-    MOUNTPOINT_FOLDER = "/mnt"
+    MOUNTPOINT_FOLDER = os.curdir
+
+    @classmethod
+    def os_block_size(cls):
+        ''' Filesystem blocksize
+        '''
+        return os.stat(cls.MOUNTPOINT_FOLDER).st_blksize()
 
 class OSXConfig(OSConfig):
     MOUNTPOINT_FOLDER = "/Volumes"

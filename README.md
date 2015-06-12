@@ -1,7 +1,7 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
-- [EncFS](https://github.com/vgough/encfs) installed and available on the command line
-- OSs: 
+- [EncFS](https://github.com/vgough/encfs) [installed](https://github.com/vgough/encfs/releases/tag/v1.8.1) and available on the command line
+- OSs:
     * Mac OSX:  supported, tested
     * Linux :   supported, testing TDB
     * Windows:  currently not supported, TBD / maybe
@@ -15,7 +15,7 @@
 
 ##Description
 
-[EncFS](https://vgough.github.io/encfs/) is a free [FUSE-based](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) cryptographic file system. It transparently encrypts files, using an arbitrary directory as backend storage for the encrypted files. EncFS works on per-file basis, which makes it suitable for syncing files and a great fit for protecting cloud data.
+[EncFS](https://vgough.github.io/encfs/) is a free [FUSE-based](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) cryptographic file system. It transparently encrypts files, using an arbitrary directory as backend storage for the encrypted files. EncFS works on per-file basis, which makes it suitable for syncing files and protecting cloud data.
 
 The EFST project help manage EncFS-encrypted data, making it easy to create / register all necessary EncFS assets and then effectively operate it via a few simple commands. In addition to common operation such as mounting / un-mounting registered EncFS volumes, EFST simplifies and automates advanced EncFS features such as reverse encryption for encrypted backups or multiple interleaved EncFS file systems for plausible deniability.
 
@@ -145,7 +145,7 @@ To keep things simple, I'll be off-loading more advanced used-cases to later blo
 ##Full description of CLI Commands
 ###efsm
 
-    EFSM enables creating new and registering existing EncFS backends, to then 
+    EFSM enables creating new and registering existing EncFS backends, to then
     easily manipulate corresponding ciphertext / plaintext views.
       . action commands:
         .. create       Sets up and register a new EncFS backend along with its related assets
