@@ -69,7 +69,7 @@ class EncFSCommands:
                         # if Block32 was explicitly attempted, notify
                         print('Block32 file name encoding not supported')
                         print('Using Block file name encoding instead')
-                    cfg_entry.nameAlg -= 1
+                    cfg_entry.nameAlg = str(int(cfg_entry.nameAlg) - 1)
 
         child.sendline(cfg_entry.nameAlg)
 
