@@ -144,9 +144,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
 
                 if not args['mountpoint_path']:
                     # compile mount volume path
-                    unique_names_checker = UniqueDirNamesChecker(config_handler.os_config.MOUNTPOINT_FOLDER)
+                    unique_names_checker = UniqueDirNamesChecker(config_handler.os_config.mountpoint_folder)
                     mountpoint = unique_names_checker.unique_name(format(args['entry_name']))
-                    args['mountpoint_path'] = os.path.join(config_handler.os_config.MOUNTPOINT_FOLDER, mountpoint)
+                    args['mountpoint_path'] = os.path.join(config_handler.os_config.mountpoint_folder, mountpoint)
 
                 # if not specified, compile mount name as well
                 if not args['mount_name']:
@@ -225,7 +225,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
         optional_args_group.add_argument('-mp', '--mountpoint-path', dest = 'mountpoint_path',
             type = lambda mpath: cls._is_valid_dir_path(parser, mpath),
             help = 'Path to the mountpoint folder. If omitted, will be auto-generated from ' \
-                                        'entry name and put in the "{}" folder'.format(config_handler.os_config.MOUNTPOINT_FOLDER))
+                                        'entry name and put in the "{}" folder'.format(config_handler.os_config.mountpoint_folder))
         optional_args_group.add_argument('-mn', '--mount-name', dest = 'mount_name',
                         type = str,
                         help = 'Mounted volume name. If ommitted, the entry name will be used')

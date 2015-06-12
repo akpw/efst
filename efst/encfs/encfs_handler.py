@@ -15,7 +15,7 @@ import os, shlex
 from efst.encfs.encfs_cfg import EncFSCFG
 from efst.encfs.encfs_cmd import EncFSCommands
 from efst.utils.efst_utils import run_cmd, CmdProcessingError, temp_dir, FSHelper
-
+from efst.config.efst_config import config_handler
 
 class EncFSHandler:
     ''' EncFS operations handler
@@ -86,12 +86,12 @@ class EncFSHandler:
                 print('Not Mounted: {}'.format(mount_dir_path))
             return False
 
-        cmd = 'umount {}'.format(shlex.quote(mount_dir_path))
+        cmd = '{0} {1}'.format(config_handler.os_config.umount_cmd, shlex.quote(mount_dir_path))
         try:
             run_cmd(cmd, shell = True)
         except CmdProcessingError as e:
             if not quiet:
-                print ('Error while unmounting: {}'.format(e.msg))
+                print ('Error while unmounting: {}'.format(e.args[0]))
             return False
         else:
             if not quiet:

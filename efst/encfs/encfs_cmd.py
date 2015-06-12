@@ -13,6 +13,7 @@
 
 import sys, shlex, pexpect, io
 from efst.encfs.encfs_cfg import EncFSNameAlg
+from efst.config.efst_config import config_handler
 
 ''' EncFS Commands Helpers
 '''
@@ -31,6 +32,8 @@ class EncFSCommands:
                         ' --reverse' if reverse else '',
                         ' {}'.format(shlex.quote(encfs_dir_path)),
                         ' {}'.format(shlex.quote(mount_dir_path)),
+                        ' {0}{1}'.format(config_handler.os_config.volname_cmd, shlex.quote(mount_name)) \
+                                                    if config_handler.os_config.volname_cmd and mount_name else ''
                         ' -o volname={}'.format(shlex.quote(mount_name)) if mount_name else ''
                         ))
         return cmd.strip()

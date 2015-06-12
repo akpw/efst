@@ -85,19 +85,52 @@ class ConfigEntries:
 class OSConfig:
     ''' OS-related config
     '''
-    MOUNTPOINT_FOLDER = os.curdir
 
-    @classmethod
-    def os_block_size(cls):
+    @property
+    def mountpoint_folder(self):
+        return ''
+
+    @property
+    def umount_cmd(self):
+        return ''
+
+    @property
+    def volname_cmd(self):
+        return ''
+
+    @property
+    def os_block_size(self):
         ''' Filesystem blocksize
         '''
-        return os.stat(cls.MOUNTPOINT_FOLDER).st_blksize()
+        return os.stat(self.mountpoint_folder).st_blksize()
+
 
 class OSXConfig(OSConfig):
-    MOUNTPOINT_FOLDER = "/Volumes"
+    ''' OSX-related config
+    '''
+    @property
+    def mountpoint_folder(self):
+        return FSHelper.full_path('/Volumes')
+
+    @property
+    def umount_cmd(self):
+        return 'umount'
+
+    @property
+    def volname_cmd(self):
+        return '-o volname='
+
 
 class LinuxConfig(OSConfig):
-    pass
+    ''' Linux-related config
+    '''
+    @property
+    def mountpoint_folder(self):
+        return FSHelper.full_path("~/EFST_MNT")
+
+    @property
+    def umount_cmd(self):
+        return 'fusermount -u'
 
 
 class EFSTConfigHandler:
@@ -107,9 +140,12 @@ class EFSTConfigHandler:
         self.config = ConfigObj(lookup_path)
 
         if sys.platform == 'linux':
-            self.os_config = LinuxConfig
+            self.os_config = LinuxConfig()
         elif sys.platform == 'darwin':
-            self.os_config = OSXConfig
+            self.os_config = OSXConfig()
+
+        if not os.path.exists(self.os_config.mountpoint_folder):
+            os.makedirs(self.os_config.mountpoint_folder)
 
 
     # EFST entries
