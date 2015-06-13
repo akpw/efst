@@ -36,7 +36,6 @@ class EncFSCommands:
                         ' {0}{1}'.format(config_handler.os_config.volname_cmd, shlex.quote(mount_name)) \
                                                 if (config_handler.os_config.volname_cmd and mount_name) else ''
                         ))
-        print(cmd)
         return cmd.strip()
 
     @staticmethod
