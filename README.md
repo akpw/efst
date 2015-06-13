@@ -1,6 +1,7 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
-- [EncFS](https://github.com/vgough/encfs) [installed](https://github.com/vgough/encfs/releases/tag/v1.8.1) and available on the command line
+- [EncFS](https://github.com/vgough/encfs) and available on the command line
+    * [v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later recommended
 - OSs:
     * Mac OSX:  supported, tested
     * Linux :   supported, testing TDB
@@ -109,7 +110,7 @@ This would keep the conf/key file in a dedicated local folder, further enhancing
 I will follow up with more advanced examples and use-cases in some of the future blogs.
 
 
-[**EFSC**](https://github.com/akpw/efst#efsc) is a EFST configuration tool for managing EncFS preset configurations that could then be used for creating EncFS config files. Out of the box, EFST provide two built-in configurations that can be viewed with the ```efsc show``` command:
+[**EFSC**](https://github.com/akpw/efst#efsc) is a EFST configuration tool for managing EncFS preset configurations that could then be used for creating EncFS config files. Out of the box, EFST provide a default built-in configurations that can be viewed with the ```efsc show``` command:
 
 ```
     $ efsc show -h
@@ -122,7 +123,7 @@ I will follow up with more advanced examples and use-cases in some of the future
                         Name of EFST Config entry to show
 ```
 
-An additional EncFS configuration could be added with ```efsc register``` command. For example, to create a ciphertext backend storage with plaintext file names:
+Additional EncFS configurations could be added with ```efsc register``` command. For example, to create a ciphertext backend storage with plaintext file names:
 
 ```
     $ efsc register -ce PlainFileNames -na Plain # creates a EFST configuration entry
@@ -132,11 +133,13 @@ An additional EncFS configuration could be added with ```efsc register``` comman
 Once registered, that now can be used by the ```efsm``` utility instead of the default ('EFSTConfigDefault') configuration:
 ```
     $ efsm create -en PlainNamesSecret -cp ~/.myKeys/pn_key \
-                        -bp ~/Dropbox/.my_secret_folder -ce PlainFileNames
+                        -bp ~/Dropbox/.my_secret_folder -ce PlainF
 
     $ efsm mount -en PlainNamesSecret
     Mounted: /Volumes/PlainNamesSecret
 ```
+
+Similar to the above example, a unique shortcut ("PlainF") is sufficient for the '-ce' parameter as it is automatically expanded to its full version ("PlainFileNames") under the hood.
 
 Since we stubbornly keep using the same backend folder '~/Dropbox/.my_secret_folded', this will add a thrid layered file system which would have encrypted content but without encrypting the actual file names.
 
