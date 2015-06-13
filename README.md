@@ -168,9 +168,9 @@ Once registered, that now can be used by the ```efsm``` utility instead of the d
 
 Similar to the above example, a unique shortcut ("PlainF") is sufficient for the '-ce' parameter as it is automatically expanded to its full version ("PlainFileNames") under the hood.
 
-Since we stubbornly keep using the same backend folder '~/Dropbox/.my_secret_folded', this will add a thrid layered file system which would have encrypted content but without encrypting the actual file names.
+Since we stubbornly keep using the same backend folder ```~/Dropbox/.my_secret_folded```, this will add a thrid layered file system which would have encrypted content but without encrypting the actual file names.
 
-To keep things simple here, I'll be off-loading more advanced used-cases to later blogs. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
+To keep things simple here, I'll be off-loading more advanced used-cases to a later blog. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
 
 
 ##Full description of CLI Commands
