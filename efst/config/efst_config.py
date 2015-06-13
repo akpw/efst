@@ -126,7 +126,7 @@ class LinuxConfig(OSConfig):
     '''
     @property
     def mountpoint_folder(self):
-        return FSHelper.full_path("~/EFST_MNT")
+        return FSHelper.full_path("~/efst/mnt")
 
     @property
     def umount_cmd(self):
