@@ -35,7 +35,7 @@ class EFSTConfigKeys:
     '''
     # Section Keys
     CIPHER_TEXT_ENTRIES_KEY = 'CipherTextEntries'
-    PLAIN_TEXT_ENTRIES_KEY = 'PlainTextEntries'
+    REVERSED_CIPHER_TEXT_ENTRIES_KEY = 'ReversedCipherTextEntries'
     ENCFS_CFG_ENTRIES_KEY = 'EncFSConfigEntries'
 
     # UnRegistered entries placeholder
@@ -46,11 +46,11 @@ class EFSTConfigKeys:
     ENCFS6_CONFIG_PATH_KEY = 'ENCFS6_CONFIG_PATH'
     ENCFS_DIR_PATH_KEY = 'ENCFS_DIR_PATH'
     MOUNT_DIR_PATH_KEY = 'MOUNT_DIR_PATH'
+    UNMOUNT_ON_IDLE_KEY = 'UNMOUNT_ON_IDLE'
     VOLUME_NAME_KEY = 'VOLUME_NAME'
 
     # EncFS Config Entry Keys
     DEFAULT_CFG_ENTRY_KEY = 'EFSTConfigDefault'
-    BOXCRYPTOR_COMPATIBLE_CFG_ENTRY_KEY = 'BoxcryptorCompatible'
 
     CIPHER_ALG = 'cipherAlg'
     KEY_SIZE = 'keySize'
@@ -67,7 +67,7 @@ class EFSTConfigKeys:
         if entry_type == EntryTypes.CipherText:
             return EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY
         else:
-            return EFSTConfigKeys.PLAIN_TEXT_ENTRIES_KEY
+            return EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY
 
     @staticmethod
     def entry_type_for_key(entry_key):
@@ -78,8 +78,9 @@ class EFSTConfigKeys:
 
 
 class ConfigEntries:
-    EFSTEntry = namedtuple('EFSTEntry', ['entry_type', 'pwd_entry', 'encfs_config_path',
-                                                    'encfs_dir_path', 'mount_dir_path', 'volume_name'])
+    EFSTEntry = namedtuple('EFSTEntry',
+                        ['entry_type', 'pwd_entry', 'encfs_config_path', 'encfs_dir_path',
+                                            'mount_dir_path', 'unmount_on_idle', 'volume_name'])
 
 
 class OSConfig:
@@ -102,7 +103,7 @@ class OSConfig:
     def os_block_size(self):
         ''' Filesystem blocksize
         '''
-        return os.stat(self.mountpoint_folder).st_blksize()
+        return os.stat(self.mountpoint_folder).st_blksize
 
 
 class OSXConfig(OSConfig):
@@ -151,44 +152,50 @@ class EFSTConfigHandler:
     # EFST entries
     ##############
     def register_entry(self, entry_name, entry_type, pwd_entry,
-                            conf_path, encfs_dir_path, mount_dir_path, mount_name):
+                            conf_path, encfs_dir_path, mount_dir_path,
+                            mount_name, unmount_on_idle = 0, quiet = False):
         ''' Registers EFST conf entry
         '''
         entry_key = EFSTConfigKeys.entry_key_for_type(entry_type)
 
         if entry_name in self.registered_entries():
-            print('"{0}": entry already registered in the {1} Entries section'.format(entry_name,
-                'Plaintext' if self._entry_key(entry_name) == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
+            if not quiet:
+                print('"{0}": entry name already registered as a {1} Entry'.format(entry_name,
+                    'Reversed CipherText' if self._entry_key(entry_name) == EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY else 'CipherText'))
         else:
             self.config[entry_key][entry_name] = {
                     EFSTConfigKeys.PWD_ENTRY_NAME_KEY: pwd_entry,
                     EFSTConfigKeys.ENCFS6_CONFIG_PATH_KEY: conf_path,
                     EFSTConfigKeys.ENCFS_DIR_PATH_KEY: encfs_dir_path,
                     EFSTConfigKeys.MOUNT_DIR_PATH_KEY: mount_dir_path,
+                    EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY: unmount_on_idle,
                     EFSTConfigKeys.VOLUME_NAME_KEY: mount_name }
             self.config.write()
-            print('{0} Entry registered: {1}'.format(
+            if not quiet:
+                print('{0} Entry registered: {1}'.format(
                             'CipherText' if entry_key == EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY
-                                                                        else 'Plaintext', entry_name))
+                                                                        else 'Reversed CipherText', entry_name))
 
-    def unregister_entry(self, entry_name):
+    def unregister_entry(self, entry_name, quiet = False):
         ''' Un-registers EFST conf entry
         '''
         entry_key = self._entry_key(entry_name)
         if entry_key:
             del(self.config[entry_key][entry_name])
             self.config.write()
-            print('Unregistered entry: {}'.format(entry_name))
+            if not quiet:
+                print('Unregistered entry: {}'.format(entry_name))
             return True
         else:
-            print('Entry is not registered: {}'.format(entry_name))
+            if not quiet:
+                print('Entry is not registered: {}'.format(entry_name))
             return False
 
     def registered_entries(self):
         ''' All EFST registered entries
         '''
         registered_entries = [entry for entry in self.config[EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY].keys()]
-        registered_entries += [entry for entry in self.config[EFSTConfigKeys.PLAIN_TEXT_ENTRIES_KEY].keys()]
+        registered_entries += [entry for entry in self.config[EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY].keys()]
         if not registered_entries:
             registered_entries = [EFSTConfigKeys.NO_ENTRIES_REGISTERED]
         return registered_entries
@@ -206,6 +213,7 @@ class EFSTConfigHandler:
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.ENCFS6_CONFIG_PATH_KEY)),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.ENCFS_DIR_PATH_KEY)),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.MOUNT_DIR_PATH_KEY)),
+                        entry_reader.get(EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY),
                         entry_reader.get(EFSTConfigKeys.VOLUME_NAME_KEY))
         return entry
 
@@ -241,8 +249,6 @@ class EFSTConfigHandler:
         if not entry_name in self.registered_encfs_cfg_entries():
             print('"{0}": EncFS conf. entry not registered'.format(entry_name))
             return False
-        elif entry_name in (EFSTConfigKeys.DEFAULT_CFG_ENTRY_KEY, EFSTConfigKeys.BOXCRYPTOR_COMPATIBLE_CFG_ENTRY_KEY):
-            print('"{0}": Can not unregister a predefined EncFS conf. entry'.format(entry_name))
         else:
             del(self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name])
             self.config.write()
@@ -275,11 +281,10 @@ class EFSTConfigHandler:
     def _entry_key(self, entry_name):
         if entry_name in self.config[EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY]:
             return EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY
-        elif entry_name in self.config[EFSTConfigKeys.PLAIN_TEXT_ENTRIES_KEY]:
-            return EFSTConfigKeys.PLAIN_TEXT_ENTRIES_KEY
+        elif entry_name in self.config[EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY]:
+            return EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY
         else:
             return None
 
 # Simplest possible Singleton impl
 config_handler = EFSTConfigHandler()
-

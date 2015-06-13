@@ -46,8 +46,8 @@ class EncFSHandler:
         return False
 
     @staticmethod
-    def mount(pwd, enc_cfg_path, encfs_dir_path,
-                    mount_dir_path, mount_name, reverse = False):
+    def mount(pwd, enc_cfg_path, encfs_dir_path, mount_dir_path,
+                                    mount_name, reverse = False, unmount_on_idle = None):
         ''' Mounts exisiting EncFS backened
         '''
         # validate inputs
@@ -67,7 +67,8 @@ class EncFSHandler:
 
         cmd = EncFSCommands.build_cmd(encfs_dir_path = encfs_dir_path,
                               mount_dir_path = mount_dir_path,
-                              reverse = reverse, enc_cfg_path = enc_cfg_path,
+                              reverse = reverse, unmount_on_idle = unmount_on_idle,
+                              enc_cfg_path = enc_cfg_path,
                               mount_name = mount_name, pwd = pwd)
         try:
             run_cmd(cmd, shell = True)

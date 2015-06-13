@@ -94,8 +94,8 @@ class EFSCOptionsParser(EFSTOptionsParser):
         optional_args_group.add_argument('-bs', '--block-size', dest = 'block_size',
                         type = int,
                         metavar = EncFSCipherAlg.block_size_msg(),
-                        default = EncFSCipherAlg.default_block_size(),
-                        help = 'EncFS Cipher Algorithm  Block Size in bytes, {} by default'.format(EncFSCipherAlg.default_block_size()))
+                        default = config_handler.os_config.os_block_size,
+                        help = 'EncFS Cipher Algorithm  Block Size in bytes. If omitted, system default ({}) will be used'.format(config_handler.os_config.os_block_size))
         optional_args_group.add_argument('-na', '--filename-algorithm', dest = 'filename_algorithm',
                         type = str,
                         choices = EncFSNameAlg.alg_names(),

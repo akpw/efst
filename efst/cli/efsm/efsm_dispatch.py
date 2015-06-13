@@ -89,19 +89,25 @@ class EFSMDispatcher(EFSTDispatcher):
                                                         conf_path = args['conf_path'],
                                                         encfs_dir_path = args['backend_path'],
                                                         mount_dir_path = args['mountpoint_path'],
-                                                        mount_name = args['mount_name'])
+                                                        mount_name = args['mount_name'],
+                                                        unmount_on_idle = args['idle_minutes'])
 
     def show_entry(self, args):
+        et_desc = lambda type: 'Reversed CipherText' if type == EntryTypes.PlainText else 'CipherText'
+        mp_desc = lambda type: 'CipherText' if type == EntryTypes.PlainText else 'Plaintext'
+        be_desc = lambda type: 'Plaintext' if type == EntryTypes.PlainText else 'CipherText'
+
+        umount_idle_desc = lambda idle: '{} mins'.format(idle) if idle else 'Disabled'
+
         entry = config_handler.entry(args['entry_name'])
         print('Entry name: {}'.format(args['entry_name']))
-        print('\tEntry type: {}'.format('Plaintext' \
-                                if entry.entry_type == EntryTypes.PlainText \
-                                else 'CipherText'))
-        print('\tPassword store entry: {}'.format(entry.pwd_entry))
-        print('\tConf/Key file: {}'.format(entry.encfs_config_path))
-        print('\tBack-end store folder: {}'.format(entry.encfs_dir_path))
-        print('\tMount folder: {}'.format(entry.mount_dir_path))
-        print('\tVolume name: {}'.format(entry.volume_name))
+        print('  Entry type: {}'.format(et_desc(entry.entry_type)))
+        print('  Password store entry: {}'.format(entry.pwd_entry))
+        print('  Conf/Key file: {}'.format(entry.encfs_config_path))
+        print('  Back-end store folder ({0}): {1}'.format(be_desc(entry.entry_type), entry.encfs_dir_path))
+        print('  Mount folder ({0}): {1}'.format(mp_desc(entry.entry_type), entry.mount_dir_path))
+        print('  Unmount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
+        print('  Volume name: {}'.format(entry.volume_name))
 
     def unregister_entry(self, args):
         ''' Un-Registers EncFS entry
@@ -130,6 +136,7 @@ class EFSMDispatcher(EFSTDispatcher):
                         mount_entry.encfs_dir_path,
                         mount_entry.mount_dir_path,
                         mount_entry.volume_name,
+                        unmount_on_idle = mount_entry.unmount_on_idle,
                         reverse = True if mount_entry.entry_type == EntryTypes.PlainText else False):
                 if new_pwd:
                     self._store_pwd(pwd, mount_entry.pwd_entry)

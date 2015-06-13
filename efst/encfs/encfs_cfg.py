@@ -15,6 +15,7 @@ import os
 from enum import Enum, unique
 from collections import namedtuple
 
+
 ''' EncFS Config Options Helpers
 '''
 

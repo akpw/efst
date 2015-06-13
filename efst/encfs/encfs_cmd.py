@@ -20,7 +20,7 @@ from efst.config.efst_config import config_handler
 
 class EncFSCommands:
     @staticmethod
-    def build_cmd(encfs_dir_path, mount_dir_path,
+    def build_cmd(encfs_dir_path, mount_dir_path, unmount_on_idle = None,
                             reverse = False, enc_cfg_path = None, mount_name = None, pwd = None):
         ''' Builds appropriate EnFS command
         '''
@@ -30,11 +30,13 @@ class EncFSCommands:
                         ' encfs',
                         ' -S' if pwd else '',
                         ' --reverse' if reverse else '',
+                        ' --idle {}'.format(unmount_on_idle) if unmount_on_idle else '',
                         ' {}'.format(shlex.quote(encfs_dir_path)),
                         ' {}'.format(shlex.quote(mount_dir_path)),
                         ' {0}{1}'.format(config_handler.os_config.volname_cmd, shlex.quote(mount_name)) \
                                                 if (config_handler.os_config.volname_cmd and mount_name) else ''
                         ))
+        print(cmd)
         return cmd.strip()
 
     @staticmethod

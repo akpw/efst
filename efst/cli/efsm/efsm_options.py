@@ -138,8 +138,8 @@ class EFSMOptionsParser(EFSTOptionsParser):
             if args['sub_cmd'] in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
                 if args['entry_name'] in (config_handler.registered_entries()):
                     entry = config_handler.entry(args['entry_name'])
-                    print('"{0}": entry name already registered in the {1} Entries section'.format(args['entry_name'],
-                        'Plaintext' if entry.entry_type == EntryTypes.PlainText else 'CipherText'))
+                    print('"{0}": entry name already registered as a {1} Entry'.format(args['entry_name'],
+                        'Reversed CipherText' if entry.entry_type == EntryTypes.PlainText else 'CipherText'))
                     parser.exit()
 
                 if not args['mountpoint_path']:
@@ -165,6 +165,10 @@ class EFSMOptionsParser(EFSTOptionsParser):
                         parser.exit()
 
                 elif args['sub_cmd'] == EFSMCommands.CREATE:
+                    # Configuration Entry name could be a partial match, need to expand
+                    args['config_entry'] = UniquePartialMatchList(
+                                        config_handler.registered_encfs_cfg_entries()).find(args['entry_name'])
+
                     if os.path.exists(args['conf_path']):
                         # using default path
                         if args['conf_path'] == default_cfg_path:
@@ -222,6 +226,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
         optional_args_group.add_argument("-r", "--reverse", dest='reverse',
                     help = "Enables reverse mode, i.e. a ciphered view for a plaintext back-end data",
                     action='store_true')
+        optional_args_group.add_argument("-i", "--idle", dest='idle_minutes',
+                    help = "Auto unmount after a period of inactivity (in minutes)",
+                    default = 0)
         optional_args_group.add_argument('-mp', '--mountpoint-path', dest = 'mountpoint_path',
             type = lambda mpath: cls._is_valid_dir_path(parser, mpath),
             help = 'Path to the mountpoint folder. If omitted, will be auto-generated from ' \
