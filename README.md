@@ -92,13 +92,13 @@ Similar to creating a new EncFS ciphertext backend store, it is as easy to regis
 ```
 
 
-Creating a reversed EFST entry can be done with the ``` -r, --reverse``` switch:
+Creating or registering a reversed EFST entry can be done with the ``` -r, --reverse``` switch:
 ```
     $ efsm create -r -en BackupDocuments -bp ~/Documents/
-    Enter password:
-    Confirm password:
+    $ Enter password:
+    $ Confirm password:
     Creating EncFS backend store...
-    Do you want to securely store the password for later use? [y/n]: y
+    $ Do you want to securely store the password for later use? [y/n]: y
     Reversed CipherText Entry registered: BackupDocuments
 
     $ efsm show -en Bac
@@ -119,10 +119,10 @@ Now whenever a secure backup of the /Documents folder is needed, just do:
     Mounted: /Volumes/BackupDocuments
 ```
 
-and the use your favorite file system backup utility on the encrypted ```/Volumes/BackupDocuments``` folder.
+and then use your favorite file system backup utility on the encrypted ```/Volumes/BackupDocuments``` folder.
 
 
-While there is more commands and options supported by the ```efsm``` utility, this already should give a decent starting point. A general recommendation would be to keep the EncFS config/key file separate from the encrypted backend data, which can be easily accomplished via the ```--conf-path``` switch for both ```efsm create``` and ```efsm register``` commands:
+While there are more commands and options supported by the ```efsm``` utility, this already should give a decent starting point. A general recommendation would be to keep the EncFS config/key file separate from the encrypted backend data, which can be done via the ```--conf-path``` switch for both ```efsm create``` and ```efsm register``` commands:
 
 ```
     $ efsm create -en LayeredSecrets -cp ~/.myKeys/se_key -bp ~/Dropbox/.my_secret_folder
@@ -138,11 +138,6 @@ While there is more commands and options supported by the ```efsm``` utility, th
 
 This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory (~/Dropbox/.my_secret_folder), another interesting implication is that we now have two interleaved encrypted file systems living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for e.g. various plausible deniablity scenarios.
 
-
-
-
-
-I will follow up with more advanced examples and use-cases in some of the future blogs.
 
 
 [**EFSC**](https://github.com/akpw/efst#efsc) is a EFST configuration tool for managing EncFS preset configurations that could then be used for creating EncFS config files. Out of the box, EFST provide a default built-in configurations that can be viewed with the ```efsc show``` command:
