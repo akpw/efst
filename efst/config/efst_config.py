@@ -11,7 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-import os, sys
+import os, sys, shutil
 from enum import IntEnum
 from collections import namedtuple
 from configobj import ConfigObj
@@ -105,6 +105,10 @@ class OSConfig:
         '''
         return os.stat(self.mountpoint_folder).st_blksize
 
+    @property
+    def usr_config_path(self):
+        return FSHelper.full_path('~/efst')
+
 
 class OSXConfig(OSConfig):
     ''' OSX-related config
@@ -136,17 +140,29 @@ class LinuxConfig(OSConfig):
 
 class EFSTConfigHandler:
     def __init__(self, lookup_path = None):
-        if lookup_path is None:
-            lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
-        self.config = ConfigObj(lookup_path)
-
         if sys.platform == 'linux':
             self.os_config = LinuxConfig()
         elif sys.platform == 'darwin':
             self.os_config = OSXConfig()
 
+        # check mountpoint folder
         if not os.path.exists(self.os_config.mountpoint_folder):
             os.makedirs(self.os_config.mountpoint_folder)
+
+        # general conf
+        if lookup_path is None:
+            lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
+
+        # efst home folder
+        if not os.path.exists(self.os_config.usr_config_path):
+            os.makedirs(self.os_config.usr_config_path)
+
+        # if needed, prepare user config data
+        usr_conf = os.path.join(self.os_config.usr_config_path, 'efst.conf')
+        if not os.path.exists(usr_conf):
+            shutil.copy(lookup_path, usr_conf)
+
+        self.config = ConfigObj(usr_conf)
 
 
     # EFST entries
