@@ -22,7 +22,7 @@ The EFST project help manage EncFS-encrypted data, making it easy to create / re
 
 The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of two main command-line utilities.
 
-[**EFSM**](https://github.com/akpw/efsm#efst) enables creating / registering / operating EncFS backend stores and all its related assets such as target mountpoint folder, mount volume name, path to config/key file, etc.
+[**EFSM**](https://github.com/akpw/efst#efsm) enables creating / registering / operating EncFS backend stores and all its related assets such as target mountpoint folder, mount volume name, path to config/key file, etc.
 One way to learn about available EFSM options would be via running:
 ```
     $ efsm -h
