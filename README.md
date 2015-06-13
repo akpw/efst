@@ -52,7 +52,7 @@ A single ```efsm create``` command there did quite a few things. A backend direc
       Volume name: MySecrets
 ```
 
-The ```-en, --entry-name``` parameter takes the name of a registered entry. Both full registered name and its unique shortcut would do, e.g. in the above example it was sufficient to shortcut 'MySecrets' to 'Mys'.
+The ```-en, --entry-name``` parameter takes the name of a registered entry. Both full registered name and its unique shortcut would do, e.g. in the above example it was sufficient to shortcut 'MySecrets' to 'MyS'.
 
 The "Password store entry" is the default name of automatically created OS-specific keychain entry. For Mac OS, this can be reviewed via the Keychain app:
 
