@@ -65,7 +65,7 @@ From now on, working with the protected data is straightforward:
     Mounted: /Volumes/MySecrets
 ```
 
-The mounted folder is where you put your plaintext data, with the encrypted version automatically stored in the backend "Dropbox/.my_secret_folder".
+The mounted folder is where you put your plaintext data, with the encrypted version automatically stored in the backend ```Dropbox/.my_secret_folder```.
 
 Un-mounting the plaintext folder is just as easy:
 ```
@@ -133,7 +133,7 @@ While there are more commands and options supported by the ```efsm``` utility, t
     Mounted: /Volumes/LayeredSecrets
 ```
 
-This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory (~/Dropbox/.my_secret_folder), another interesting implication is that now two interleaved encrypted file systems are living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for various plausible deniablity scenarios.
+This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory ```~/Dropbox/.my_secret_folder```, another interesting implication is that now two interleaved encrypted file systems are living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for various plausible deniablity scenarios.
 
 
 
