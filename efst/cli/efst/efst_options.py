@@ -39,8 +39,10 @@ class EFSTOptionsParser:
         self._script_name = 'EFST'
         self._description = \
     '''
-    Encrypted File System tools help secure your data with
-    Filesystem (EncFS).
+    Encrypted File System tools help manage
+    EncFS-encrypted data, making it easy to organize
+    various EncFS assets and then effectively operate it
+    via a few simple commands.
 
     For more information on provided tools, run:
         $ efsm -h

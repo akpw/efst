@@ -52,10 +52,14 @@ class EFSMOptionsParser(EFSTOptionsParser):
         self._script_name = 'EFSM'
         self._description = \
     '''
-    EFSM is a part of EFST tools. It enables creating
-    new and registering existing EncFS back-end stores,
-    to then easily manipulate corresponding
-    ciphered / plaintext views.
+    EFSM is a part of EFST tools.
+    It enables creating new and registering
+    existing EncFS backend store directories as well as
+    related assets such as target mountpoint folder,
+    mount volume name, path to EncFS config/key file,
+    safely-stored passwords, etc.
+    Once registered, these EFST entries can be easily
+    manipulated in a single simple command.
     '''
 
     # Options parsing

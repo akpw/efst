@@ -40,9 +40,13 @@ class EFSCOptionsParser(EFSTOptionsParser):
         self._script_name = 'EFSM'
         self._description = \
     '''
-        EFSC is a part of EFST tools. It helps create
-        EncFS conf/key files and manage related
-        EFST config. entries
+        A part of EFST tools, EFSC is a
+        configuration utility for managing EncFS
+        presets used for creating EncFS config files.
+        Out of the box, EFST come with a default built-in
+        configuration that can be viewed via:
+
+            $ efsc show -ce EFST
     '''
 
     # Options parsing
