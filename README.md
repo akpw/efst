@@ -9,6 +9,7 @@
 
 
 ####Install:
+- from [PyPI](https://pypi.python.org/pypi/efst): `$ pip install efst`
 - latest from source repository: `$ pip install git+https://github.com/akpw/efst.git`
 
 ####Blog:
