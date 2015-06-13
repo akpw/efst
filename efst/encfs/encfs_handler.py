@@ -17,6 +17,7 @@ from efst.encfs.encfs_cmd import EncFSCommands
 from efst.utils.efst_utils import run_cmd, CmdProcessingError, temp_dir, FSHelper
 from efst.config.efst_config import config_handler
 
+
 class EncFSHandler:
     ''' EncFS operations handler
     '''
@@ -29,7 +30,7 @@ class EncFSHandler:
                 cmd = EncFSCommands.build_cmd(encfs_dir_path = tmp_encfs, mount_dir_path = tmp_mount)
 
                 EncFSCommands.run_expectant_cmd(cmd, cfg_entry, pwd)
-                EncFSHandler.umount(tmp_mount, quiet = True)
+                EncFSHandler.umount(tmp_mount, quiet = True):
 
                 cfg_name = os.path.join(tmp_encfs, EncFSCFG.DEFAULT_CFG_FNAME)
                 if os.path.exists(cfg_name):

@@ -50,7 +50,7 @@ def encfs_version():
 
 
 @contextmanager
-def temp_dir():
+def temp_dir(quiet = True):
     ''' Temp dir context manager
     '''
     tmp_dir = tempfile.mkdtemp()
@@ -58,7 +58,11 @@ def temp_dir():
         yield tmp_dir
     finally:
         # remove tmp dir
-        shutil.rmtree(tmp_dir)
+        try:
+            shutil.rmtree(tmp_dir)
+        except OSError as e:
+            if not quiet:
+                print ('Error while removing a tmp dir: {}'.format(e.args[0]))
 
 
 class FSHelper:
