@@ -1,11 +1,11 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
 - [EncFS](https://github.com/vgough/encfs) and available on the command line
-    * [v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later recommended
+    * [EncFS v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later is recommended
 - OSs:
-    * Mac OSX:  supported, tested
-    * Linux :   supported, testing TDB
-    * Windows:  currently not supported, TBD / maybe
+    * Mac OSX:  supported (tested)
+    * Linux :   supported (tested with limited features)
+    * Windows:  not supported (TBD / maybe)
 
 
 ####Install:
