@@ -42,12 +42,13 @@ A single simple command did quite a few things there. A backend directory for st
 ```
     $ efsm show -en MyS
     Entry name: MySecrets
-        Entry type: CipherText
-        Password store entry: efst-entry-MySecrets
-        Conf/Key file: /Users/AKPW/Dropbox/.my_secret_folder/.encfs6.xml
-        Back-end store folder: /Users/AKPW/Dropbox/.my_secret_folder
-        Mount folder: /Volumes/MySecrets
-        Volume name: MySecrets
+      Entry type: CipherText
+      Password store entry: efst-entry-MySecrets
+      Conf/Key file: /Users/AKPower/Dropbox/.my_secret_folder/.encfs6.xml
+      Back-end store folder (CipherText): /Users/AKPower/Dropbox/.my_secret_folder
+      Mount folder (Plaintext): /Volumes/MySecrets
+      Un-mount on idle: Disabled
+      Volume name: MySecrets
 ```
 
 The ```-en, --entry-name``` parameter takes the name of a registered entry. Both full registered name and its unique shortcut would do, e.g. in the above it was sufficient to shortcut 'MySecrets' to 'Mys'.
@@ -112,12 +113,12 @@ I will follow up with more advanced examples and use-cases in some of the future
 
 ```
     $ efsc show -h
-    usage: EFSM show [-h] -ce ['EFSTConfigDefault', 'BoxcryptorCompatible']
+    usage: EFSM show [-h] -ce ['EFSTConfigDefault']
 
     Shows a registered EFST Config entry
 
     Required Arguments:
-        -ce, --config-entry ['EFSTConfigDefault', 'BoxcryptorCompatible']
+        -ce, --config-entry ['EFSTConfigDefault']
                         Name of EFST Config entry to show
 ```
 
@@ -139,7 +140,7 @@ Once registered, that now can be used by the ```efsm``` utility instead of the d
 
 Since we stubbornly keep using the same backend folder '~/Dropbox/.my_secret_folded', this will add a thrid layered file system which would have encrypted content but without encrypting the actual file names.
 
-To keep things simple, I'll be off-loading more advanced used-cases to later blogs. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
+To keep things simple here, I'll be off-loading more advanced used-cases to later blogs. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
 
 
 ##Full description of CLI Commands

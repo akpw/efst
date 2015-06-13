@@ -106,7 +106,7 @@ class EFSMDispatcher(EFSTDispatcher):
         print('  Conf/Key file: {}'.format(entry.encfs_config_path))
         print('  Back-end store folder ({0}): {1}'.format(be_desc(entry.entry_type), entry.encfs_dir_path))
         print('  Mount folder ({0}): {1}'.format(mp_desc(entry.entry_type), entry.mount_dir_path))
-        print('  Unmount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
+        print('  Un-mount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
         print('  Volume name: {}'.format(entry.volume_name))
 
     def unregister_entry(self, args):

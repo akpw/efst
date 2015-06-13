@@ -207,13 +207,15 @@ class EFSTConfigHandler:
         entry_key = self._entry_key(entry_name)
         if entry_key:
             entry_reader = self.config[entry_key][entry_name]
+            unmount_on_idle = entry_reader.get(EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY)
+            unmount_on_idle = int(unmount_on_idle) if unmount_on_idle else 0
             entry = ConfigEntries.EFSTEntry(
                         EFSTConfigKeys.entry_type_for_key(entry_key),
                         entry_reader.get(EFSTConfigKeys.PWD_ENTRY_NAME_KEY),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.ENCFS6_CONFIG_PATH_KEY)),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.ENCFS_DIR_PATH_KEY)),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.MOUNT_DIR_PATH_KEY)),
-                        entry_reader.get(EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY),
+                        unmount_on_idle,
                         entry_reader.get(EFSTConfigKeys.VOLUME_NAME_KEY))
         return entry
 
