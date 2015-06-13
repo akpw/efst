@@ -31,7 +31,7 @@ One way to learn about available EFSM options would be via running:
 
 As a more hands on approach, lets just quickly create and handle a basic encrypted Dropbox folder:
 ```
-    $ **efsm create -en MySecrets -bp ~/Dropbox/.my_secret_folder**
+    $ efsm create -en MySecrets -bp ~/Dropbox/.my_secret_folder
     $ Enter password:
     $ Confirm password:
     Creating EncFS backend store...
