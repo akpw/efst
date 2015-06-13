@@ -30,7 +30,7 @@ class EncFSHandler:
                 cmd = EncFSCommands.build_cmd(encfs_dir_path = tmp_encfs, mount_dir_path = tmp_mount)
 
                 EncFSCommands.run_expectant_cmd(cmd, cfg_entry, pwd)
-                EncFSHandler.umount(tmp_mount, quiet = True):
+                EncFSHandler.umount(tmp_mount, quiet = True)
 
                 cfg_name = os.path.join(tmp_encfs, EncFSCFG.DEFAULT_CFG_FNAME)
                 if os.path.exists(cfg_name):
