@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='efst',
-    version='0.14',
+    version='0.15',
 
     url='https://github.com/akpw/efst',
 
@@ -22,7 +22,7 @@ setup(
     author_email='k.arseniy@gmail.com',
 
     description=('''
-                    Encrypted File System tools help secure your data with EncFS
+                    Encrypted File System Tools help secure and manage your data using EncFS
                 '''),
     license='GNU General Public License v2 (GPLv2)',
 
@@ -32,7 +32,7 @@ setup(
         '': ['config/*.conf'],
     },
 
-    keywords = 'EncFS create encrypt decrypt export mount unmount',
+    keywords = 'EncFS create encrypt decrypt export mount unmount ciphertext plaintext',
 
     install_requires = ['configobj>=5.0.6', 'keyring>=5.3', 'pexpect>=3.3'],
 
@@ -57,6 +57,7 @@ setup(
         'Intended Audience :: System Administrators',
         'Intended Audience :: Information Technology',
         'Operating System :: MacOS',
+        'Operating System :: POSIX :: Linux',
         'Topic :: System',
         'Topic :: System :: Systems Administration',
         'Topic :: Utilities',

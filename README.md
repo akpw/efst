@@ -3,9 +3,9 @@
 - [EncFS](https://github.com/vgough/encfs) and available on the command line
     * [EncFS v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later is recommended
 - OSs:
-    * Mac OSX:  supported (tested)
-    * Linux :   supported (tested with limited features)
-    * Windows:  not supported (TBD / maybe)
+    * Mac OSX
+    * Linux
+    * Windows: TBD / maybe
 
 
 ####Install:
@@ -39,7 +39,7 @@ As a more hands on approach, lets just quickly create and handle a basic encrypt
     CipherText Entry registered: MySecrets
 ```
 
-A single simple command did quite a few things there. A backend directory for storing the encrypted files was created, an EncFS config/key file was generated, default values were figured out and finally the password was collected from input, set, and stored in OS-specific system keyring service. To review all of these in detail, let's take a look at the relevant EFST config entry:
+A single simple command did quite a few things. A backend directory for storing the encrypted files was created, an EncFS config/key file was generated, default values were figured out and finally the password was collected from input, set, and stored in OS-specific system keyring service. To review all of these in detail, let's take a look at the relevant EFST config entry:
 ```
     $ efsm show -en MyS
     Entry name: MySecrets
@@ -52,7 +52,7 @@ A single simple command did quite a few things there. A backend directory for st
       Volume name: MySecrets
 ```
 
-The ```-en, --entry-name``` parameter takes the name of a registered entry. Both full registered name and its unique shortcut would do, e.g. in the above it was sufficient to shortcut 'MySecrets' to 'Mys'.
+The ```-en, --entry-name``` parameter above takes the name of a registered entry. Both full registered name and its unique shortcut would do, e.g. in the above it was sufficient to shortcut 'MySecrets' to 'Mys'.
 
 The "Password store entry" is the default name of automatically created OS-specific keychain entry. For Mac OS, this can be reviewed via the Keychain app:
 
@@ -65,7 +65,7 @@ From now on, working with the protected data is straightforward:
     Mounted: /Volumes/MySecrets
 ```
 
-Now the mounted folder is where you put your plaintext data, with the encrypted version automatically stored in the backend "Dropbox/.my_secret_folder".
+The mounted folder is where you put your plaintext data, with the encrypted version automatically stored in the backend "Dropbox/.my_secret_folder".
 
 Un-mounting the plaintext folder is just as easy:
 ```
@@ -91,7 +91,38 @@ Similar to creating a new EncFS ciphertext backend store, it is as easy to regis
     Unmounted: /Volumes/OtherSecrets
 ```
 
-While there a few more commands / options supported by the ```efsm``` utility, this already should provide a decent starting point. A general recommendation would be to keep the EncFS config/key file separate from the encrypted backend data, which can be easily accomplished via the ```--conf-path``` switch for both ```efsm create``` and ```efsm register``` commands:
+
+Creating a reversed EFST entry can be done with the ``` -r, --reverse``` switch:
+```
+    $ efsm create -r -en BackupDocuments -bp ~/Documents/
+    Enter password:
+    Confirm password:
+    Creating EncFS backend store...
+    Do you want to securely store the password for later use? [y/n]: y
+    Reversed CipherText Entry registered: BackupDocuments
+
+    $ efsm show -en Bac
+    Entry name: BackupDocuments
+      Entry type: Reversed CipherText
+      Password store entry: efst-entry-BackupDocuments
+      Conf/Key file: /Users/AKPower/Documents/.encfs6.xml
+      Back-end store folder (Plaintext): /Users/AKPower/Documents
+      Mount folder (CipherText): /Volumes/BackupDocuments
+      Un-mount on idle: Disabled
+      Volume name: BackupDocuments
+```
+
+Now whenever a secure backup of the /Documents folder is needed, just do:
+```
+    $ efsm mount -en Bac
+    BackupDocuments
+    Mounted: /Volumes/BackupDocuments
+```
+
+and the use your favorite file system backup utility on the encrypted ```/Volumes/BackupDocuments``` folder.
+
+
+While there is more commands and options supported by the ```efsm``` utility, this already should give a decent starting point. A general recommendation would be to keep the EncFS config/key file separate from the encrypted backend data, which can be easily accomplished via the ```--conf-path``` switch for both ```efsm create``` and ```efsm register``` commands:
 
 ```
     $ efsm create -en LayeredSecrets -cp ~/.myKeys/se_key -bp ~/Dropbox/.my_secret_folder
@@ -105,7 +136,11 @@ While there a few more commands / options supported by the ```efsm``` utility, t
     Mounted: /Volumes/LayeredSecrets
 ```
 
-This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory (~/Dropbox/.my_secret_folder), another implication is that we now have a two interleaved encrypted file systems living in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for e.g. various plausible deniablity scenarios.
+This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory (~/Dropbox/.my_secret_folder), another interesting implication is that we now have two interleaved encrypted file systems living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for e.g. various plausible deniablity scenarios.
+
+
+
+
 
 I will follow up with more advanced examples and use-cases in some of the future blogs.
 
