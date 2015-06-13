@@ -1,6 +1,6 @@
 ####Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
-- [EncFS](https://github.com/vgough/encfs) installed and available on the command line
+- [EncFS](https://vgough.github.io/encfs/) installed and available on the command line
     * [EncFS v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later is recommended
 - OSs:
     * Mac OSX
@@ -22,14 +22,14 @@ The EFST project help manage EncFS-encrypted data, making it easy to create / re
 
 The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of two main command-line utilities.
 
-[**EFSM**](https://github.com/akpw/efst#efsm) enables creating / registering / operating EncFS backend stores and all its related assets such as target mountpoint folder, mount volume name, path to config/key file, etc.
+[**EFSM**](https://github.com/akpw/efst#efsm) enables creating / registering / operating EncFS backend stores and related assets such as target mountpoint folder, mount volume name, path to EncFS config/key file, etc.
 One way to learn about available EFSM options would be via running:
 ```
     $ efsm -h
 
 ```
 
-As a more hands on approach, lets just quickly create and handle a basic encrypted Dropbox folder:
+As a more hands on approach, lets just quickly create and handle a basic encrypted Dropbox folder (all examples below are from Mac OS terminal, for Linux some details such as mountpoint folders, etc. might be a bit different):
 ```
     $ efsm create -en MySecrets -bp ~/Dropbox/.my_secret_folder
     $ Enter password:
@@ -115,8 +115,6 @@ Creating or registering a reversed EFST entry can be done with the ``` -r, --rev
 Now whenever a secure backup of the /Documents folder is needed, just do:
 ```
     $ efsm mount -en Bac
-    BackupDocuments
-    Mounted: /Volumes/BackupDocuments
 ```
 
 and then use your favorite file system backup utility on the encrypted ```/Volumes/BackupDocuments``` folder.
