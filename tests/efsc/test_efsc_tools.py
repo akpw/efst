@@ -27,6 +27,12 @@ class EFSCTests(EFSCTest):
         # cleanup
         self.resetDataFromBackup(quiet=True)
 
+    def test_setup(self):
+        #return ##
+        self.assertTrue(os.path.exists(config_handler.os_config.efst_user_dir_path))
+        self.assertTrue(os.path.exists(config_handler.os_config.mountpoint_folder))
+        self.assertTrue(os.path.exists(config_handler.usr_conf_data_path))
+
     def test_create_key(self):
         #return ##
         self._remove_test_key()
