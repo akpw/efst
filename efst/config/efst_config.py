@@ -106,7 +106,7 @@ class OSConfig:
         return os.stat(self.mountpoint_folder).st_blksize
 
     @property
-    def usr_config_path(self):
+    def efst_user_dir_path(self):
         return FSHelper.full_path('~/efst')
 
 
@@ -131,7 +131,7 @@ class LinuxConfig(OSConfig):
     '''
     @property
     def mountpoint_folder(self):
-        return FSHelper.full_path("~/efst/mnt")
+        return os.path.join(self.efst_user_dir_path, "mnt")
 
     @property
     def umount_cmd(self):
@@ -139,30 +139,33 @@ class LinuxConfig(OSConfig):
 
 
 class EFSTConfigHandler:
-    def __init__(self, lookup_path = None):
+    def __init__(self):
         if sys.platform == 'linux':
             self.os_config = LinuxConfig()
         elif sys.platform == 'darwin':
             self.os_config = OSXConfig()
 
+        # efst user config folder
+        if not os.path.exists(self.os_config.efst_user_dir_path):
+            os.makedirs(self.os_config.efst_user_dir_path)
+
         # check mountpoint folder
         if not os.path.exists(self.os_config.mountpoint_folder):
             os.makedirs(self.os_config.mountpoint_folder)
 
-        # general conf
-        if lookup_path is None:
+        # if needed, stage the user config data
+        self.usr_conf_data_path = os.path.join(self.os_config.efst_user_dir_path, 'efst.conf')
+        if not os.path.exists(self.usr_conf_data_path):
+            # stage from the efst conf template
             lookup_path = resource_filename(Requirement.parse("efst"), "efst/config/efst.conf")
+            shutil.copy(lookup_path, self.usr_conf_data_path)
 
-        # efst home folder
-        if not os.path.exists(self.os_config.usr_config_path):
-            os.makedirs(self.os_config.usr_config_path)
+        self.config = ConfigObj(self.usr_conf_data_path)
 
-        # if needed, prepare user config data
-        usr_conf = os.path.join(self.os_config.usr_config_path, 'efst.conf')
-        if not os.path.exists(usr_conf):
-            shutil.copy(lookup_path, usr_conf)
-
-        self.config = ConfigObj(usr_conf)
+    def read_from_disk(self):
+        ''' (Force-)Read conf data from disk
+        '''
+        self.config = ConfigObj(self.usr_conf_data_path)
 
 
     # EFST entries
@@ -242,11 +245,13 @@ class EFSTConfigHandler:
         '''
         return [entry for entry in self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY].keys()]
 
-    def register_encfs_cfg_entry(self, entry_name, entry_info):
+    def register_encfs_cfg_entry(self, entry_name, entry_info, quiet = False):
         ''' Registeres EncFS configuration
         '''
         if entry_name in self.registered_encfs_cfg_entries():
-            print('"{}": EncFS conf. entry already registered'.format(entry_name))
+            if not quiet:
+                print('"{}": EncFS conf. entry already registered'.format(entry_name))
+            return False
         else:
             self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name] = {
                     EFSTConfigKeys.CIPHER_ALG: entry_info.cipherAlg,
@@ -259,18 +264,22 @@ class EFSTConfigHandler:
                     EFSTConfigKeys.BLOCK_MAC_RAND_BYTES: entry_info.blockMACRandBytes,
                     EFSTConfigKeys.ALLOW_HOLES: entry_info.allowHoles}
             self.config.write()
-            print('{0} entry registered'.format(entry_name))
+            if not quiet:
+                print('{0} entry registered'.format(entry_name))
+            return True
 
-    def unregister_encfs_cfg_entry(self, entry_name):
+    def unregister_encfs_cfg_entry(self, entry_name, quiet = False):
         ''' Un-registeres EncFS configuration
         '''
         if not entry_name in self.registered_encfs_cfg_entries():
-            print('"{0}": EncFS conf. entry not registered'.format(entry_name))
+            if not quiet:
+                print('"{0}": EncFS conf. entry not registered'.format(entry_name))
             return False
         else:
             del(self.config[EFSTConfigKeys.ENCFS_CFG_ENTRIES_KEY][entry_name])
             self.config.write()
-            print('Unregistered entry: {}'.format(entry_name))
+            if not quiet:
+                print('Unregistered entry: {}'.format(entry_name))
             return True
 
     def encfs_cfg_entry(self, cfg_entry_name = None):

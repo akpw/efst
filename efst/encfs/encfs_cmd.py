@@ -12,6 +12,7 @@
 ## GNU General Public License for more details.
 
 import sys, shlex, pexpect, io
+from distutils.util import strtobool
 from efst.encfs.encfs_cfg import EncFSNameAlg
 from efst.config.efst_config import config_handler
 
@@ -43,7 +44,6 @@ class EncFSCommands:
         ''' Creates new EncFS conf/key file
         '''
         print('Creating EncFS backend store...')
-
         child = pexpect.spawnu(cmd)
 
         child.expect('>')
@@ -84,6 +84,10 @@ class EncFSCommands:
 
         child.expect('Enable per-file initialization vectors')
         child.sendline(cfg_entry.uniqueIV)
+
+        if strtobool(cfg_entry.chainedNameIV) and strtobool(cfg_entry.uniqueIV):
+            child.expect('Enable filename to IV header chaining')
+            child.sendline('n')
 
         child.expect('Enable block authentication code headers')
         child.sendline(cfg_entry.blockMACBytes)

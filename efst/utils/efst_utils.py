@@ -12,7 +12,7 @@
 ## GNU General Public License for more details.
 
 import os, sys, shlex, tempfile, shutil, re
-import subprocess
+import subprocess, hashlib
 import keyring, getpass
 from collections import Iterable
 from contextlib import contextmanager
@@ -117,6 +117,18 @@ class FSHelper:
             if stop:
                 sys.exit(1)
         return succeeded
+
+    @staticmethod
+    def file_md5(fpath, block_size=0, hex=False):
+        ''' Calculates MD5 hash for a file at fpath
+        '''
+        md5 = hashlib.md5()
+        if block_size == 0:
+            block_size = 128 * md5.block_size
+        with open(fpath,'rb') as f:
+            for chunk in iter(lambda: f.read(block_size), b''):
+                md5.update(chunk)
+        return md5.hexdigest() if hex else md5.digest()
 
 
 class UniqueDirNamesChecker:
