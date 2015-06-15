@@ -50,9 +50,9 @@ class EFSMTest(test_base.BMPTest):
         return ConfigEntries.EFSTEntry(
                     type,
                     'efst-entry-TestEFSTEntry',
-                    '/Users/AKPower/_Dev/GitHub/efst/tests/efsm/data/test_backend/.encfs6.xml',
-                    '/Users/AKPower/_Dev/GitHub/efst/tests/efsm/data/test_backend',
-                    '/Users/AKPower/_Dev/GitHub/efst/tests/efsm/data/mnt',
+                    '{}/test_backend/.encfs6.xml'.format(self.src_dir),
+                    '{}/test_backend'.format(self.src_dir),
+                    '{}/mnt'.format(self.src_dir),
                     '1',
                     'TestEFSTEntry_Mount')
 
