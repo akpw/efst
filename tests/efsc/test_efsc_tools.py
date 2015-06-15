@@ -29,13 +29,18 @@ class EFSCTests(EFSCTest):
 
     def test_create_key(self):
         #return ##
+        self._remove_test_key()
+
         cmd = 'efsc create-key -cp {0} -ce {1}'.format(self.src_dir, self.default_cfg_entry_name_shortcut)
         self.assertTrue(self.run_expectant_pwd_cmd(cmd))
         self.assertTrue(os.path.exists(os.path.join(self.src_dir, EncFSCFG.DEFAULT_CFG_FNAME)))
 
+        self._remove_test_key()
+
     def test_register_entry(self):
         #return ##
         self._unregister_test_entry()
+        self._remove_test_key()
 
         # register
         test_cfg_entry = self.test_cfg_entry
@@ -61,10 +66,11 @@ class EFSCTests(EFSCTest):
         self.assertTrue(self.run_expectant_pwd_cmd(cmd))
         self.assertTrue(os.path.exists(os.path.join(self.src_dir, EncFSCFG.DEFAULT_CFG_FNAME)))
 
+        self._remove_test_key()
+
         # unregister
         self.assertTrue(
                 config_handler.unregister_encfs_cfg_entry(entry_name = self.test_cfg_entry_name, quiet = True))
-
 
     def test_show_entry(self):
         #return ##
@@ -72,8 +78,9 @@ class EFSCTests(EFSCTest):
 
         cmd = 'efsc show -ce {}'.format(self.test_cfg_entry_name_shortcut)
         output = run_cmd(cmd)
-        print('\n  ', output)
+        print('\n', output)
 
+        self._unregister_test_entry()
 
     def test_unregister_entry(self):
         #return ##
@@ -102,4 +109,7 @@ class EFSCTests(EFSCTest):
             self.assertTrue(
                 config_handler.unregister_encfs_cfg_entry(entry_name = self.test_cfg_entry_name, quiet = True))
 
+    def _remove_test_key(self):
+        if os.path.exists(os.path.join(self.src_dir, EncFSCFG.DEFAULT_CFG_FNAME)):
+            os.remove(os.path.join(self.src_dir, EncFSCFG.DEFAULT_CFG_FNAME))
 

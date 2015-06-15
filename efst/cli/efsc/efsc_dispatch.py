@@ -52,15 +52,15 @@ class EFSCDispatcher(EFSTDispatcher):
         entry = config_handler.encfs_cfg_entry(args['config_entry'])
         enable_tr = lambda letter: 'Enabled' if letter.lower() == 'y' else 'Disabled'
         print('Entry name: {}'.format(args['config_entry']))
-        print('\tCipher Algorithm: {}'.format(EncFSCipherAlg.alg_name_by_type(entry.cipherAlg)))
-        print('\tKey Size: {}'.format(entry.keySize))
-        print('\tBlock Size: {}'.format(entry.blockSize))
-        print('\tNaming Algorithm: {}'.format(EncFSNameAlg.alg_name_by_type(entry.nameAlg)))
-        print('\tFilename initialization vector: {}'.format(enable_tr(entry.chainedNameIV)))
-        print('\tPer-file initialization vector: {}'.format(enable_tr(entry.uniqueIV)))
-        print('\tBlock authentication code headers: {}'.format(enable_tr(entry.blockMACBytes)))
-        print('\tAdd random bytes to each block header: {}'.format(entry.blockMACRandBytes))
-        print('\tFile-hole pass-through: {}'.format(enable_tr(entry.allowHoles)))
+        print('   Cipher Algorithm: {}'.format(EncFSCipherAlg.alg_name_by_type(entry.cipherAlg)))
+        print('   Key Size: {}'.format(entry.keySize))
+        print('   Block Size: {}'.format(entry.blockSize))
+        print('   Naming Algorithm: {}'.format(EncFSNameAlg.alg_name_by_type(entry.nameAlg)))
+        print('   Filename initialization vector: {}'.format(enable_tr(entry.chainedNameIV)))
+        print('   Per-file initialization vector: {}'.format(enable_tr(entry.uniqueIV)))
+        print('   Block authentication code headers: {}'.format(enable_tr(entry.blockMACBytes)))
+        print('   Add random bytes to each block header: {}'.format(entry.blockMACRandBytes))
+        print('   File-hole pass-through: {}'.format(enable_tr(entry.allowHoles)))
 
     def register_cfg_entry(self, args):
         entry_tr = lambda bool_value: 'y' if bool_value else 'n'

@@ -143,7 +143,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
                 if args['entry_name'] in (config_handler.registered_entries()):
                     entry = config_handler.entry(args['entry_name'])
                     print('"{0}": entry name already registered as a {1} Entry'.format(args['entry_name'],
-                        'Reversed CipherText' if entry.entry_type == EntryTypes.PlainText else 'CipherText'))
+                        'Reversed CipherText' if entry.entry_type == EntryTypes.ReversedCipherText else 'CipherText'))
                     parser.exit()
 
                 if not args['mountpoint_path']:
@@ -182,9 +182,14 @@ class EFSMOptionsParser(EFSTOptionsParser):
                                   'to explicitly specify the new conf/key file')
                             parser.exit()
                         else:
-                            print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
-                            print('To register an existing backend store, run "efst register -h"')
-                            parser.exit()
+                            if os.path.isdir(args['conf_path']):
+                                args['conf_path'] = os.path.join(args['conf_path'], EncFSCFG.DEFAULT_CFG_FNAME)
+
+                            # still exists...
+                            if os.path.exists(args['conf_path']):
+                                print('EncFS conf/key file already exists: \n\t"{}"'.format(args['conf_path']))
+                                print('To register an existing backend store, run "efst register -h"')
+                                parser.exit()
 
     @property
     def _default_command(self):
@@ -219,10 +224,15 @@ class EFSMOptionsParser(EFSTOptionsParser):
                 'That can reversed via the "--reverse" switch, which results in an on-demand ciphered view for your plaintext back-end data')
 
         optional_args_group = parser.add_argument_group('Additional Arguments')
+        # Conf path
+        def _conf_path_checker(cpath):
+            if action_type == ConfKeyActionType.Create:
+                return FSHelper.full_path(cpath, check_parent_path = True)
+            else:
+                return cls._is_valid_file_path(parser, cpath)
+
         optional_args_group.add_argument('-cp', '--conf-path', dest = 'conf_path',
-                        type = (lambda cpath:FSHelper.full_path(cpath, check_parent_path = True)) \
-                                 if action_type == ConfKeyActionType.Create \
-                                    else (lambda cpath: cls._is_valid_file_path(parser, cpath)),
+                        type = lambda cpath:_conf_path_checker(cpath),
                         help = '{0}ath to the EncFS conf/key file. ' \
                             'If ommitted, a default one will be {1} in the back-end folder'.format(
                                    'P' if action_type == ConfKeyActionType.Register else 'Target p',

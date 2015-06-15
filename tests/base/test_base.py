@@ -95,17 +95,25 @@ class BMPTest(unittest.TestCase):
             if not quiet:
                 print('No restore needed')
 
-    def run_expectant_pwd_cmd(self, cmd):
+    @property
+    def test_password(self):
+        return 'a_bogus_test_pwd'
+
+    def run_expectant_pwd_cmd(self, cmd, ask_to_store = False, store = True):
         ''' Supplies a bogus password for creating keys
         '''
 
         child = pexpect.spawnu(cmd)
 
         child.expect('Enter password')
-        child.sendline('a_bogus_test_pwd')
+        child.sendline(self.test_password)
 
         child.expect('Confirm password')
-        child.sendline('a_bogus_test_pwd')
+        child.sendline(self.test_password)
+
+        if ask_to_store:
+            child.expect('Do you want to securely store the password for later use')
+            child.sendline('y' if store else 'n')
 
         child.expect(pexpect.EOF, timeout=None)
         child.close()

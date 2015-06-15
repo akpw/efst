@@ -15,7 +15,7 @@
 import os
 from efst.cli.efst.efst_dispatch import EFSTDispatcher
 from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, EntryTypes, EFSTConfigKeys
+from efst.config.efst_config import config_handler, EntryTypes, EFSTConfigKeys, ConfigEntries
 from efst.cli.efsm.efsm_options import EFSMOptionsParser, EFSMCommands
 from efst.utils.efst_utils import PasswordHandler
 
@@ -33,13 +33,13 @@ class EFSMDispatcher(EFSTDispatcher):
 
             if args['sub_cmd'] in (EFSMCommands.CREATE):
                 if args['reverse']:
-                    self.create_entry(args, EntryTypes.PlainText)
+                    self.create_entry(args, EntryTypes.ReversedCipherText)
                 else:
                     self.create_entry(args, EntryTypes.CipherText)
 
             elif args['sub_cmd'] in (EFSMCommands.REGISTER):
                 if args['reverse']:
-                    self.register_entry(args, EntryTypes.PlainText)
+                    self.register_entry(args, EntryTypes.ReversedCipherText)
                 else:
                     self.register_entry(args, EntryTypes.CipherText)
 
@@ -81,36 +81,40 @@ class EFSMDispatcher(EFSTDispatcher):
 
 
     def register_entry(self, args, entry_type):
-        ''' Registers EncFS backend store / respective view
+        ''' Registers EFST entry
         '''
-        config_handler.register_entry(entry_name = args['entry_name'],
-                                                        entry_type = entry_type,
-                                                        pwd_entry = args['pwd_entry'],
-                                                        conf_path = args['conf_path'],
-                                                        encfs_dir_path = args['backend_path'],
-                                                        mount_dir_path = args['mountpoint_path'],
-                                                        mount_name = args['mount_name'],
-                                                        unmount_on_idle = args['idle_minutes'])
+        entry_info = ConfigEntries.EFSTEntry(entry_type,
+                                                args['pwd_entry'],
+                                                args['conf_path'],
+                                                args['backend_path'],
+                                                args['mountpoint_path'],
+                                                args['idle_minutes'],
+                                                args['mount_name'])
+        config_handler.register_entry(entry_name = args['entry_name'], entry_info = entry_info)
+
 
     def show_entry(self, args):
-        et_desc = lambda type: 'Reversed CipherText' if type == EntryTypes.PlainText else 'CipherText'
-        mp_desc = lambda type: 'CipherText' if type == EntryTypes.PlainText else 'Plaintext'
-        be_desc = lambda type: 'Plaintext' if type == EntryTypes.PlainText else 'CipherText'
+        ''' Prints out EFST entry info
+        '''
+        et_desc = lambda type: 'Reversed CipherText' if type == EntryTypes.ReversedCipherText else 'CipherText'
+        mp_desc = lambda type: 'CipherText' if type == EntryTypes.ReversedCipherText else 'Plaintext'
+        be_desc = lambda type: 'Plaintext' if type == EntryTypes.ReversedCipherText else 'CipherText'
 
-        umount_idle_desc = lambda idle: '{} mins'.format(idle) if idle else 'Disabled'
+        mins_format = lambda mins: '{0} min{1}'.format(mins, '' if int(mins) == 1 else 's')
+        umount_idle_desc = lambda idle: mins_format(idle) if idle else 'Disabled'
 
         entry = config_handler.entry(args['entry_name'])
         print('Entry name: {}'.format(args['entry_name']))
-        print('  Entry type: {}'.format(et_desc(entry.entry_type)))
-        print('  Password store entry: {}'.format(entry.pwd_entry))
-        print('  Conf/Key file: {}'.format(entry.encfs_config_path))
-        print('  Back-end store folder ({0}): {1}'.format(be_desc(entry.entry_type), entry.encfs_dir_path))
-        print('  Mount folder ({0}): {1}'.format(mp_desc(entry.entry_type), entry.mount_dir_path))
-        print('  Un-mount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
-        print('  Volume name: {}'.format(entry.volume_name))
+        print('   Entry type: {}'.format(et_desc(entry.entry_type)))
+        print('   Password store entry: {}'.format(entry.pwd_entry))
+        print('   Conf/Key file: {}'.format(entry.encfs_config_path))
+        print('   Back-end store folder ({0}): {1}'.format(be_desc(entry.entry_type), entry.encfs_dir_path))
+        print('   Mount folder ({0}): {1}'.format(mp_desc(entry.entry_type), entry.mount_dir_path))
+        print('   Un-mount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
+        print('   Volume name: {}'.format(entry.volume_name))
 
     def unregister_entry(self, args):
-        ''' Un-Registers EncFS entry
+        ''' Un-Registers EFST entry
         '''
         entry = config_handler.entry(args['entry_name'])
 
@@ -122,7 +126,7 @@ class EFSMDispatcher(EFSTDispatcher):
             PasswordHandler.delete_pwd(entry.pwd_entry)
 
     def mount_entry(self, args):
-        ''' Mounts a registered EncFS entry
+        ''' Mounts a registered EFST entry
         '''
         print(args['entry_name'])
         mount_entry = config_handler.entry(args['entry_name'])
@@ -137,12 +141,12 @@ class EFSMDispatcher(EFSTDispatcher):
                         mount_entry.mount_dir_path,
                         mount_entry.volume_name,
                         unmount_on_idle = mount_entry.unmount_on_idle,
-                        reverse = True if mount_entry.entry_type == EntryTypes.PlainText else False):
+                        reverse = True if mount_entry.entry_type == EntryTypes.ReversedCipherText else False):
                 if new_pwd:
                     self._store_pwd(pwd, mount_entry.pwd_entry)
 
     def umount_entry(self, args, quiet = False):
-        ''' Un-mounts a registered EncFS entry
+        ''' Un-mounts a registered EFST entry
         '''
         umount_entry = config_handler.entry(args['entry_name'])
         EncFSHandler.umount(umount_entry.mount_dir_path, quiet = quiet)

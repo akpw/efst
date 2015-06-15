@@ -47,22 +47,25 @@ class EncFSHandler:
 
     @staticmethod
     def mount(pwd, enc_cfg_path, encfs_dir_path, mount_dir_path,
-                                    mount_name, reverse = False, unmount_on_idle = None):
+                                    mount_name, reverse = False, unmount_on_idle = None, quiet = False):
         ''' Mounts exisiting EncFS backened
         '''
         # validate inputs
         if enc_cfg_path and not os.path.exists(enc_cfg_path):
-            print('Wrong conf/key path: {}'.format(enc_cfg_path))
+            if not quiet:
+                print('Wrong conf/key path: {}'.format(enc_cfg_path))
             return False
 
         if not os.path.exists(encfs_dir_path):
-            print('Wrong backend folder path: {}'.format(encfs_dir_path))
+            if not quiet:
+                print('Wrong backend folder path: {}'.format(encfs_dir_path))
             return False
 
         if not os.path.exists(mount_dir_path):
             os.mkdir(mount_dir_path)
         elif os.path.ismount(mount_dir_path):
-            print('Already Mounted: {}'.format(mount_dir_path))
+            if not quiet:
+                print('Already Mounted: {}'.format(mount_dir_path))
             return False
 
         cmd = EncFSCommands.build_cmd(encfs_dir_path = encfs_dir_path,
@@ -73,10 +76,12 @@ class EncFSHandler:
         try:
             run_cmd(cmd, shell = True)
         except CmdProcessingError as e:
-            print ('Error while mounting: {}'.format(e.args[0]))
+            if not quiet:
+                print ('Error while mounting: {}'.format(e.args[0]))
             return False
         else:
-            print('Mounted: {}'.format(mount_dir_path))
+            if not quiet:
+                print('Mounted: {}'.format(mount_dir_path))
             return True
 
     @staticmethod

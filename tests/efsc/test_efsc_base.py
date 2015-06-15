@@ -28,7 +28,7 @@ class EFSCTest(test_base.BMPTest):
 
     @property
     def test_cfg_entry_name_shortcut(self):
-        return 'tEFSTCfg'
+        return self.test_cfg_entry_name[3:11]
 
     @property
     def test_cfg_entry(self):
