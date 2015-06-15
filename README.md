@@ -40,14 +40,14 @@ As a more hands on approach, lets just quickly create and handle a basic encrypt
     CipherText Entry registered: MySecrets
 ```
 
-A single ```efsm create``` command there did quite a few things. A backend directory for storing the encrypted files was created, an EncFS config/key file was generated, default values were figured out and finally the password was collected, set, and safely stored in OS-specific system keyring service. To review all of these in detail, let's take a look at the relevant EFST config entry:
+A single ```efsm create``` command there did quite a few things. A backend directory for storing the encrypted files was created, an EncFS config/key file was generated, default values were figured out and finally the password was collected, set, and safely stored in OS-specific system keyring service. To review all of these in details, let's take a look at the relevant EFST config entry:
 ```
     $ efsm show -en MyS
     Entry name: MySecrets
       Entry type: CipherText
       Password store entry: efst-entry-MySecrets
-      Conf/Key file: /Users/AKPower/Dropbox/.my_secret_folder/.encfs6.xml
-      Back-end store folder (CipherText): /Users/AKPower/Dropbox/.my_secret_folder
+      Conf/Key file: /Users/AKPW/Dropbox/.my_secret_folder/.encfs6.xml
+      Back-end store folder (CipherText): /Users/AKPW/Dropbox/.my_secret_folder
       Mount folder (Plaintext): /Volumes/MySecrets
       Un-mount on idle: Disabled
       Volume name: MySecrets
@@ -105,8 +105,8 @@ Creating or registering a reversed EFST entry can be done with the ``` -r, --rev
     Entry name: BackupDocuments
       Entry type: Reversed CipherText
       Password store entry: efst-entry-BackupDocuments
-      Conf/Key file: /Users/AKPower/Documents/.encfs6.xml
-      Back-end store folder (Plaintext): /Users/AKPower/Documents
+      Conf/Key file: /Users/AKPW/Documents/.encfs6.xml
+      Back-end store folder (Plaintext): /Users/AKPW/Documents
       Mount folder (CipherText): /Volumes/BackupDocuments
       Un-mount on idle: Disabled
       Volume name: BackupDocuments
@@ -134,11 +134,11 @@ While there are more commands and options supported by the ```efsm``` utility, t
     Mounted: /Volumes/LayeredSecrets
 ```
 
-This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As in the examples above we put both encrypted backends into a single directory ```~/Dropbox/.my_secret_folder```, another interesting implication is that now two interleaved encrypted file systems are living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could be useful for various plausible deniablity scenarios.
+This would keep the conf/key file in a dedicated local folder, further enhancing the cloud data security. As we put the ```LayeredSecrets``` encrypted backend into the same ```~/Dropbox/.my_secret_folder``` that was already used in a prior example, another interesting implication is that now two interleaved encrypted file systems are living alongside in a single place. While generally it's a good idea to use dedicated backend storage folders, a configuration like that could actually be useful for various plausible deniablity scenarios.
 
 
 
-[**EFSC**](https://github.com/akpw/efst#efsc) is a EFST configuration tool for managing EncFS preset configurations that could then be used for creating EncFS config files. Out of the box, EFST provide a default built-in configuration that can be viewed with the ```efsc show``` command:
+[**EFSC**](https://github.com/akpw/efst#efsc) is a EFST configuration tool for managing EncFS preset configurations that could be used for creating EncFS config files. Out of the box, EFST provide a default built-in configuration that can be viewed with the ```efsc show``` command:
 
 ```
     $ efsc show -h
@@ -151,10 +151,10 @@ This would keep the conf/key file in a dedicated local folder, further enhancing
                         Name of EFST Config entry to show
 ```
 
-Additional EncFS configurations could be added with ```efsc register``` command. For example, to create a ciphertext backend storage with plaintext file names:
+Additional EncFS presets could be added with ```efsc register``` command. For example, to create a EncFS configuration for ciphertext backend storage with plaintext file names:
 
 ```
-    $ efsc register -ce PlainFileNames -na Plain # creates a EFST configuration entry
+    $ efsc register -ce PlainFileNames -na Plain # creates a EncFS preset configuration entry
                                                  # with no encryption for file names
 ```
 
@@ -169,7 +169,7 @@ Once registered, that now can be used by the ```efsm``` utility instead of the d
 
 Similar to the above example, a unique shortcut ("PlainF") is sufficient for the ```-ce``` parameter as it is automatically expanded to its full version ("PlainFileNames") under the hood.
 
-Since we stubbornly keep using the same backend folder ```~/Dropbox/.my_secret_folded```, this will add a thrid layered file system which would have encrypted content but without encrypting the actual file names.
+Since we stubbornly keep using the same backend folder ```~/Dropbox/.my_secret_folded```, this will add a thrid layered file system which would have encrypted files content without encrypting the actual file names.
 
 To keep things simple here, I'll be off-loading more advanced used-cases to a later blog. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
 
