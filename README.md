@@ -219,7 +219,7 @@ To keep things simple here, I'll be off-loading more advanced used-cases to a la
 - Clone the repo, then run: `$ python setup.py develop`
 
 **Running Tests**
-- TDB
+- Run via: `$ python setup.py test`
 
 
 
