@@ -87,6 +87,17 @@ class OSConfig:
     ''' OS-related config
     '''
 
+    @staticmethod
+    def os_config():
+        ''' Factory method
+        '''
+        if sys.platform == 'linux':
+            return LinuxConfig()
+        elif sys.platform == 'darwin':
+            return OSXConfig()
+        else:
+            return None
+
     @property
     def mountpoint_folder(self):
         return ''
@@ -140,10 +151,10 @@ class LinuxConfig(OSConfig):
 
 class EFSTConfigHandler:
     def __init__(self):
-        if sys.platform == 'linux':
-            self.os_config = LinuxConfig()
-        elif sys.platform == 'darwin':
-            self.os_config = OSXConfig()
+        self.os_config = OSConfig.os_config()
+        if not self.os_config:
+            print('Non-supported platform: {}'.format(sys.platform))
+            sys.exit(1)
 
         # efst user config folder
         if not os.path.exists(self.os_config.efst_user_dir_path):
@@ -317,3 +328,4 @@ class EFSTConfigHandler:
 
 # Simplest possible Singleton impl
 config_handler = EFSTConfigHandler()
+print(config_handler.os_config.mountpoint_folder)
