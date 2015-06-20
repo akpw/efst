@@ -171,7 +171,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
                 elif args['sub_cmd'] == EFSMCommands.CREATE:
                     # Configuration Entry name could be a partial match, need to expand
                     args['config_entry'] = UniquePartialMatchList(
-                                        config_handler.registered_encfs_cfg_entries()).find(args['entry_name'])
+                                        config_handler.registered_encfs_cfg_entries()).find(args['config_entry'])
 
                     if os.path.exists(args['conf_path']):
                         # using default path
