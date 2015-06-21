@@ -23,7 +23,6 @@ class EFSBCommands(EFSTCommands):
     @classmethod
     def commands_meta(cls):
         return ''.join(('{',
-                        '{}, '.format(cls.UNREGISTER),
                         '{}'.format(cls.SHOW),
                         '}'))
 
@@ -68,7 +67,8 @@ class EFSBOptionsParser(EFSTOptionsParser):
         super()._check_cmd_args(args, parser)
 
         # Registered Entry name could be a partial match, need to expand
-        args['entry_name'] = UniquePartialMatchList(
+        if args['sub_cmd'] in (EFSBCommands.SHOW):
+            args['entry_name'] = UniquePartialMatchList(
                                     config_handler.registered_entries()).find(args['entry_name'])
 
     @property
