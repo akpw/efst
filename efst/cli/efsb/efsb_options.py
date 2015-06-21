@@ -36,8 +36,8 @@ class EFSBOptionsParser(EFSTOptionsParser):
     '''
         A part of EFST tools, EFSB is a
         configuration utility for managing EncFS
-        back-end stores folders. It can show info
-        about registered EFST File Systems, change
+        back-end stores folders. It can show
+        registered EFST File Systems info, change
         EncFS passwords, list encrypted files,
         encode / decode file names,
         show EncFS cruft info, etc.
