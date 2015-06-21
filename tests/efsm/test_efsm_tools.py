@@ -17,7 +17,7 @@ from .test_efsm_base import EFSMTest
 from efst.utils.efst_utils import run_cmd, CmdProcessingError
 from efst.encfs.encfs_cfg import EncFSCFG
 from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, EFSTConfigHandler, EntryTypes
+from efst.config.efst_config import config_handler, EntryTypes
 
 
 class EFSMTests(EFSMTest):
@@ -106,19 +106,6 @@ class EFSMTests(EFSMTest):
 
 
     # Helpers
-    def _register_test_entry(self):
-        # if not already registered, register
-        if not self.test_entry_name in config_handler.registered_entries():
-            self.assertTrue(
-                config_handler.register_entry(entry_name = self.test_entry_name,
-                                              entry_info = self.test_entry, quiet = True))
-
-    def _unregister_test_entry(self):
-        if self.test_entry_name in config_handler.registered_entries():
-            # if registered, unregister
-            self.assertTrue(
-                config_handler.unregister_entry(entry_name = self.test_entry_name, quiet = True))
-
     def _mount_test_entry(self):
        self.assertTrue(EncFSHandler.mount(self.test_password,
                             enc_cfg_path = self.test_entry.encfs_config_path,

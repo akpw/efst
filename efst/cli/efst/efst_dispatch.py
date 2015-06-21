@@ -67,7 +67,11 @@ class EFSTDispatcher:
             print('No password entered, exiting...')
             sys.exit(0)
 
-        return pwd, EncFSHandler.create_cfg_file(pwd, cfg_entry, args['conf_path'])
+        result = EncFSHandler.create_cfg_file(pwd, cfg_entry, args['conf_path'])
+        if not result:
+            print('Error creating conf/key file at requested location:\n\t"{}"'.format(args['conf_path']))
+
+        return pwd, result
 
     # Internal helpers
     def _store_pwd(self, pwd, pwd_entry):

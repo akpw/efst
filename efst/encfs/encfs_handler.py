@@ -41,8 +41,6 @@ class EncFSHandler:
 
                     if FSHelper.move_FS_entry(cfg_name, cfg_target_path, quiet = True):
                         return True
-                    else:
-                        print('Error creating conf/key file at requested location:\n\t"{}"'.format(cfg_target_path))
         return False
 
     @staticmethod
@@ -105,7 +103,26 @@ class EncFSHandler:
                 print('Unmounted: {}'.format(mount_dir_path))
             return True
 
+    @staticmethod
+    def backend_info(encfs_dir_path, enc_cfg_path, quiet = False):
+        if not os.path.exists(enc_cfg_path):
+            if not quiet:
+                print('Wrong conf/key path: {}'.format(enc_cfg_path))
+            return None
 
+        if not os.path.exists(encfs_dir_path):
+            if not quiet:
+                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+            return None
 
+        cmd = EncFSCommands.build_ctl_show_cmd(encfs_dir_path = encfs_dir_path, enc_cfg_path = enc_cfg_path)
+        try:
+            output = run_cmd(cmd, shell = True)
+        except CmdProcessingError as e:
+            if not quiet:
+                print ('Error while getting EncFS backend info: {}'.format(e.args[0]))
+            return None
+        else:
+            return output
 
 

@@ -42,6 +42,7 @@ setup(
         'efst = efst.cli.efst.efst_dispatch:main',
         'efsc = efst.cli.efsc.efsc_dispatch:main',
         'efsm = efst.cli.efsm.efsm_dispatch:main',
+        'efsb = efst.cli.efsb.efsb_dispatch:main',
     ]},
 
     zip_safe=True,

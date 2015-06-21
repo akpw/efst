@@ -47,6 +47,7 @@ class EFSTOptionsParser:
     For more information on provided tools, run:
         $ efsm -h
         $ efsc -h
+        $ efsb -h
     '''
 
     @property
@@ -135,6 +136,16 @@ class EFSTOptionsParser:
             parser.error('"{}" does not seem to be an existing file path'.format(path_arg))
         else:
             return path_arg
+
+    @staticmethod
+    def _add_entry_name(parser, registered_only = False, help = 'EFST Entry name'):
+        parser.add_argument('-en', '--entry-name', dest = 'entry_name',
+                        type = str,
+                        metavar = config_handler.registered_entries() if registered_only else None,
+                        required = True,
+                        choices = UniquePartialMatchList(
+                                        config_handler.registered_entries()) if registered_only else None,
+                        help = help)
 
     @staticmethod
     def _add_config_entry(parser):

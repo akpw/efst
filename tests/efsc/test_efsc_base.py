@@ -15,7 +15,7 @@ from ..base import test_base
 from efst.encfs.encfs_cfg import EncFSCFG, EncFSCipherAlg, EncFSNameAlg
 
 
-class EFSCTest(test_base.BMPTest):
+class EFSCTest(test_base.EFSTTest):
     @classmethod
     def setUpClass(cls):
         cls.src_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))

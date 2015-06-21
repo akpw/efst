@@ -14,8 +14,9 @@ import unittest, os, sys
 import shutil, pexpect
 from efst.utils.efst_utils import FSHelper
 from efst.config.efst_config import config_handler, EFSTConfigHandler, EFSTConfigKeys
+from efst.config.efst_config import ConfigEntries, EntryTypes
 
-class BMPTest(unittest.TestCase):
+class EFSTTest(unittest.TestCase):
     src_dir = bckp_dir = None
 
     @classmethod
@@ -132,3 +133,50 @@ class BMPTest(unittest.TestCase):
         return EFSTConfigKeys.DEFAULT_CFG_ENTRY_KEY[3:11]
 
 
+    @property
+    def test_entry_name(self):
+        return 'TestEFSTEntry'
+
+    @property
+    def test_entry_name_shortcut(self):
+        return self.test_entry_name[1:11]
+
+    @property
+    def test_backend_path(self):
+      return os.path.join(self.src_dir, 'test_backend')
+
+    @property
+    def test_mount_path(self):
+      test_mount_path = os.path.join(self.src_dir, 'mnt')
+      if not os.path.exists(test_mount_path):
+        os.makedirs(test_mount_path)
+      return test_mount_path
+
+    @property
+    def test_mount_name(self):
+      return ''.join((self.test_entry_name, '_Mount'))
+
+    @property
+    def test_entry(self, type = EntryTypes.CipherText):
+        return ConfigEntries.EFSTEntry(
+                    type,
+                    'efst-entry-TestEFSTEntry',
+                    '{}/test_backend/.encfs6.xml'.format(self.src_dir),
+                    '{}/test_backend'.format(self.src_dir),
+                    '{}/mnt'.format(self.src_dir),
+                    '1',
+                    'TestEFSTEntry_Mount')
+
+    # Helpers
+    def _register_test_entry(self):
+        # if not already registered, register
+        if not self.test_entry_name in config_handler.registered_entries():
+            self.assertTrue(
+                config_handler.register_entry(entry_name = self.test_entry_name,
+                                              entry_info = self.test_entry, quiet = True))
+
+    def _unregister_test_entry(self):
+        if self.test_entry_name in config_handler.registered_entries():
+            # if registered, unregister
+            self.assertTrue(
+                config_handler.unregister_entry(entry_name = self.test_entry_name, quiet = True))

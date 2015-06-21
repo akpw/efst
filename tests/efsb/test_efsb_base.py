@@ -13,10 +13,10 @@
 import os
 from ..base import test_base
 
-class EFSMTest(test_base.EFSTTest):
+class EFSBTest(test_base.EFSTTest):
     @classmethod
     def setUpClass(cls):
         cls.src_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
         cls.bckp_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), '.data'))
-        super(EFSMTest, cls).setUpClass()
+        super(EFSBTest, cls).setUpClass()
 

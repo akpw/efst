@@ -39,6 +39,15 @@ class EncFSCommands:
                         ))
         return cmd.strip()
 
+
+    @staticmethod
+    def build_ctl_show_cmd(encfs_dir_path, enc_cfg_path):
+        return ''.join((
+                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)),
+                        ' encfsctl info {}'.format(shlex.quote(encfs_dir_path))
+                        ))
+
+
     @staticmethod
     def run_expectant_cmd(cmd, cfg_entry, pwd):
         ''' Creates new EncFS conf/key file
