@@ -27,9 +27,9 @@ class EFSCCommands(EFSTCommands):
                         '{}, '.format(cls.CREATE_KEY),
                         '{}, '.format(cls.REGISTER),
                         '{}, '.format(cls.UNREGISTER),
-                        '{}, '.format(cls.SHOW),
-                        '{}, '.format(cls.INFO),
-                        '{}'.format(cls.VERSION),
+                        '{}'.format(cls.SHOW),
+                        #'{}, '.format(cls.INFO),
+                        #'{}'.format(cls.VERSION),
                         '}'))
 
 
@@ -37,7 +37,7 @@ class EFSCOptionsParser(EFSTOptionsParser):
     ''' EFSC Options Parser
     '''
     def __init__(self):
-        self._script_name = 'EFSM'
+        self._script_name = 'EFSC'
         self._description = \
     '''
         A part of EFST tools, EFSC is a

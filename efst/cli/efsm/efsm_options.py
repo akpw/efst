@@ -32,9 +32,9 @@ class EFSMCommands(EFSTCommands):
                         '{}, '.format(cls.UNREGISTER),
                         '{}, '.format(cls.SHOW),
                         '{}, '.format(cls.MOUNT),
-                        '{}, '.format(cls.UMOUNT),
-                        '{}, '.format(cls.INFO),
-                        '{}'.format(cls.VERSION),
+                        '{}'.format(cls.UMOUNT),
+                        #'{}, '.format(cls.INFO),
+                        #'{}'.format(cls.VERSION),
                         '}'))
 
 
