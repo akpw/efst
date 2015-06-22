@@ -25,7 +25,9 @@ class EFSBCommands(EFSTCommands):
     @classmethod
     def commands_meta(cls):
         return ''.join(('{',
-                        '{}'.format(cls.SHOW),
+                        '{},'.format(cls.SHOW),
+                        ' {},'.format(cls.ENCODE),
+                        ' {}'.format(cls.DECODE),
                         '}'))
 
 
