@@ -99,6 +99,8 @@ class EncFSHandler:
 
     @staticmethod
     def backend_info(encfs_dir_path, enc_cfg_path, quiet = False):
+        ''' EncFS backened general info
+        '''
         # validate inputs
         if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
                                                 enc_cfg_path = enc_cfg_path, quiet = quiet):
@@ -116,6 +118,8 @@ class EncFSHandler:
 
     @staticmethod
     def key_info(encfs_dir_path, enc_cfg_path, pwd = None, quiet = False):
+        ''' EncFS key plaintext value
+        '''
         # validate inputs
         if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
                                                 enc_cfg_path = enc_cfg_path, quiet = quiet):
@@ -129,13 +133,15 @@ class EncFSHandler:
                 output = EncFSCommands.expectant_key(cmd, pwd)
             except CmdProcessingError as e:
                 if not quiet:
-                    print ('Error while getting EncFS key info: {}'.format(e.args[0]))
+                    print ('Error while getting EncFS key value info: {}'.format(e.args[0]))
                 return None
             else:
                 return output
 
     @staticmethod
     def encode(encfs_dir_path, enc_cfg_path, filename, pwd, quiet = False):
+        ''' Encodes file entry name
+        '''
         # validate inputs
         if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
                                                 enc_cfg_path = enc_cfg_path, quiet = quiet):
@@ -159,6 +165,9 @@ class EncFSHandler:
 
     @staticmethod
     def decode(encfs_dir_path, enc_cfg_path, filename, pwd, quiet = False):
+        ''' Decodes file entry name
+        '''
+
         # validate inputs
         if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
                                                 enc_cfg_path = enc_cfg_path, quiet = quiet):

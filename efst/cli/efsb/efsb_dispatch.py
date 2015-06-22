@@ -65,6 +65,9 @@ class EFSBDispatcher(EFSTDispatcher):
                     key_info = EncFSHandler.key_info(encfs_dir_path = entry.encfs_dir_path, pwd = pwd,
                                                                     enc_cfg_path = entry.encfs_config_path)
                     if key_info:
+                        if new_pwd:
+                            self._store_pwd(pwd, entry.pwd_entry)
+
                         # Print the key
                         print('  The Key: {}'.format(key_info))
 
@@ -84,8 +87,12 @@ class EFSBDispatcher(EFSTDispatcher):
                                                         enc_cfg_path = entry.encfs_config_path,
                                                                 filename = args['file_entry_name'], pwd = pwd)
             if encoded:
-                # Print the key
+                if new_pwd:
+                    self._store_pwd(pwd, entry.pwd_entry)
+
+                # Print the encoded name
                 print('Encoded: {}'.format(encoded))
+
 
     def decode(self, args):
         entry = config_handler.entry(args['entry_name'])
@@ -95,7 +102,10 @@ class EFSBDispatcher(EFSTDispatcher):
                                                         enc_cfg_path = entry.encfs_config_path,
                                                                 filename = args['file_entry_name'], pwd = pwd)
             if decoded:
-                # Print thdekey
+                if new_pwd:
+                    self._store_pwd(pwd, entry.pwd_entry)
+
+                # Print the decoded name
                 print('Decoded: {}'.format(decoded))
 
 

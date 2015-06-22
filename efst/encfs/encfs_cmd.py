@@ -42,6 +42,8 @@ class EncFSCommands:
 
     @staticmethod
     def build_ctl_show_info_cmd(encfs_dir_path, enc_cfg_path = None):
+        ''' Builds EnFSCtl info command
+        '''
         return ''.join((
                         'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl info {}'.format(shlex.quote(encfs_dir_path))
@@ -49,10 +51,14 @@ class EncFSCommands:
 
     @staticmethod
     def build_ctl_show_key_cmd(encfs_dir_path):
+        ''' Builds EnFSCtl showKey command
+        '''
         return 'encfsctl showKey {}'.format(shlex.quote(encfs_dir_path)).strip()
 
     @staticmethod
     def build_ctl_encode_cmd(encfs_dir_path, enc_cfg_path, filename, pwd):
+        ''' Builds EnFSCtl encode command
+        '''
         return ''.join((
                         'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl encode {}'.format(shlex.quote(encfs_dir_path)),
@@ -62,6 +68,8 @@ class EncFSCommands:
 
     @staticmethod
     def build_ctl_decode_cmd(encfs_dir_path, enc_cfg_path, filename, pwd):
+        ''' Builds EnFSCtl decode command
+        '''
         return ''.join((
                         'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl decode {}'.format(shlex.quote(encfs_dir_path)),
@@ -144,6 +152,8 @@ class EncFSCommands:
 
     @staticmethod
     def expectant_key(cmd, pwd):
+        ''' Extracts EncFS key value in plaintext
+        '''
         child = pexpect.spawnu(cmd)
 
         child.expect('EncFS Password')
