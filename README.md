@@ -211,7 +211,7 @@ cruft info, etc.
         .. version      Shows EFST version
 
     Usage: $ efsb [-h]
-                    {create-key, register, show, unregister, info, version}
+                    {show, encode, decode}
       Commands:
          {show, encode, decode}
 
