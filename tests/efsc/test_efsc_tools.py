@@ -45,7 +45,7 @@ class EFSCTests(EFSCTest):
 
     def test_register_entry(self):
         #return ##
-        self._unregister_test_entry()
+        self._unregister_test_cfg_entry()
         self._remove_test_key()
 
         # register
@@ -80,17 +80,17 @@ class EFSCTests(EFSCTest):
 
     def test_show_entry(self):
         #return ##
-        self._register_test_entry()
+        self._register_test_cfg_entry()
 
         cmd = 'efsc show -ce {}'.format(self.test_cfg_entry_name_shortcut)
         output = run_cmd(cmd)
         print('\n', output)
 
-        self._unregister_test_entry()
+        self._unregister_test_cfg_entry()
 
     def test_unregister_entry(self):
         #return ##
-        self._register_test_entry()
+        self._register_test_cfg_entry()
 
         cmd = 'efsc unregister -ce {}'.format(self.test_cfg_entry_name_shortcut)
         output = run_cmd(cmd)
@@ -101,7 +101,7 @@ class EFSCTests(EFSCTest):
 
 
     # Helpers
-    def _register_test_entry(self):
+    def _register_test_cfg_entry(self):
         # if not already registered, register
         if not self.test_cfg_entry_name in config_handler.registered_encfs_cfg_entries():
             test_cfg_entry = self.test_cfg_entry_config
@@ -109,7 +109,7 @@ class EFSCTests(EFSCTest):
                 config_handler.register_encfs_cfg_entry(entry_name = self.test_cfg_entry_name,
                                                             entry_info = test_cfg_entry, quiet = True))
 
-    def _unregister_test_entry(self):
+    def _unregister_test_cfg_entry(self):
         if self.test_cfg_entry_name in config_handler.registered_encfs_cfg_entries():
             # if already registered, unregister
             self.assertTrue(
