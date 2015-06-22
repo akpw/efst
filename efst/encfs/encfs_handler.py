@@ -49,14 +49,8 @@ class EncFSHandler:
         ''' Mounts exisiting EncFS backened
         '''
         # validate inputs
-        if enc_cfg_path and not os.path.exists(enc_cfg_path):
-            if not quiet:
-                print('Wrong conf/key path: {}'.format(enc_cfg_path))
-            return False
-
-        if not os.path.exists(encfs_dir_path):
-            if not quiet:
-                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
             return False
 
         if not os.path.exists(mount_dir_path):
@@ -105,14 +99,9 @@ class EncFSHandler:
 
     @staticmethod
     def backend_info(encfs_dir_path, enc_cfg_path, quiet = False):
-        if not os.path.exists(enc_cfg_path):
-            if not quiet:
-                print('Wrong conf/key path: {}'.format(enc_cfg_path))
-            return None
-
-        if not os.path.exists(encfs_dir_path):
-            if not quiet:
-                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+        # validate inputs
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
             return None
 
         cmd = EncFSCommands.build_ctl_show_info_cmd(encfs_dir_path = encfs_dir_path, enc_cfg_path = enc_cfg_path)
@@ -127,14 +116,9 @@ class EncFSHandler:
 
     @staticmethod
     def key_info(encfs_dir_path, enc_cfg_path, pwd = None, quiet = False):
-        if not (os.path.exists(enc_cfg_path) and os.path.isfile(enc_cfg_path)):
-            if not quiet:
-                print('Wrong conf/key path: {}'.format(enc_cfg_path))
-            return None
-
-        if not os.path.exists(encfs_dir_path):
-            if not quiet:
-                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+        # validate inputs
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
             return None
 
         with temp_dir() as tmp_encfs:
@@ -149,3 +133,64 @@ class EncFSHandler:
                 return None
             else:
                 return output
+
+    @staticmethod
+    def encode(encfs_dir_path, enc_cfg_path, filename, pwd, quiet = False):
+        # validate inputs
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
+            return None
+
+        cmd = EncFSCommands.build_ctl_encode_cmd(encfs_dir_path = encfs_dir_path,
+                                                            enc_cfg_path = enc_cfg_path,
+                                                                    filename = filename, pwd = pwd)
+        try:
+            output = run_cmd(cmd, shell = True)
+        except CmdProcessingError as e:
+            if not quiet:
+                print ('Error while encoding: {}'.format(e.args[0]))
+            return None
+        else:
+            for encoded in output.splitlines():
+                if encoded:
+                    return encoded
+
+        return None
+
+    @staticmethod
+    def decode(encfs_dir_path, enc_cfg_path, filename, pwd, quiet = False):
+        # validate inputs
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
+            return None
+        cmd = EncFSCommands.build_ctl_decode_cmd(encfs_dir_path = encfs_dir_path,
+                                                            enc_cfg_path = enc_cfg_path,
+                                                                    filename = filename, pwd = pwd)
+        try:
+            output = run_cmd(cmd, shell = True)
+        except CmdProcessingError as e:
+            if not quiet:
+                print ('Error while decoding: {}'.format(e.args[0]))
+            return None
+        else:
+            for decoded in output.splitlines():
+                if decoded:
+                    return decoded
+
+        return None
+
+    # Helpers
+    def _check_args(encfs_dir_path = None, enc_cfg_path = None, quiet = False):
+        if enc_cfg_path and not (os.path.exists(enc_cfg_path) and os.path.isfile(enc_cfg_path)):
+            if not quiet:
+                print('Wrong conf/key path: {}'.format(enc_cfg_path))
+            return False
+
+        if encfs_dir_path and not (os.path.exists(encfs_dir_path) and os.path.isdir(encfs_dir_path)):
+            if not quiet:
+                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+            return False
+
+        return True
+
+

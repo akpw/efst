@@ -26,7 +26,7 @@ class EncFSCommands:
         ''' Builds appropriate EnFS command
         '''
         cmd = ''.join((
-                        'echo {} | '.format(pwd) if pwd else '',
+                        'echo {} | '.format(shlex.quote(pwd)) if pwd else '',
                         ' ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfs',
                         ' -S' if pwd else '',
@@ -41,16 +41,33 @@ class EncFSCommands:
 
 
     @staticmethod
-    def build_ctl_show_info_cmd(encfs_dir_path, enc_cfg_path):
+    def build_ctl_show_info_cmd(encfs_dir_path, enc_cfg_path = None):
         return ''.join((
-                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)),
+                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl info {}'.format(shlex.quote(encfs_dir_path))
-                        ))
+                        )).strip()
 
     @staticmethod
     def build_ctl_show_key_cmd(encfs_dir_path):
-        return 'encfsctl showKey {}'.format(shlex.quote(encfs_dir_path))
+        return 'encfsctl showKey {}'.format(shlex.quote(encfs_dir_path)).strip()
 
+    @staticmethod
+    def build_ctl_encode_cmd(encfs_dir_path, enc_cfg_path, filename, pwd):
+        return ''.join((
+                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        ' encfsctl encode {}'.format(shlex.quote(encfs_dir_path)),
+                        ' {}'.format(shlex.quote(filename)),
+                        ' --extpass="echo {}"'.format(shlex.quote(pwd)),
+                        )).strip()
+
+    @staticmethod
+    def build_ctl_decode_cmd(encfs_dir_path, enc_cfg_path, filename, pwd):
+        return ''.join((
+                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        ' encfsctl decode {}'.format(shlex.quote(encfs_dir_path)),
+                        ' {}'.format(shlex.quote(filename)),
+                        ' --extpass="echo {}"'.format(shlex.quote(pwd)),
+                        )).strip()
 
     @staticmethod
     def run_expectant_cmd(cmd, cfg_entry, pwd):

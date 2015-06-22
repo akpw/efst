@@ -33,6 +33,10 @@ class EFSBDispatcher(EFSTDispatcher):
 
             if args['sub_cmd'] == EFSBCommands.SHOW:
                 self.show_info(args)
+            elif args['sub_cmd'] == EFSBCommands.ENCODE:
+                self.encode(args)
+            elif args['sub_cmd'] == EFSBCommands.DECODE:
+                self.decode(args)
             else:
                 print('Nothing to dispatch')
                 return False
@@ -71,6 +75,28 @@ class EFSBDispatcher(EFSTDispatcher):
                 for line in backend_info.splitlines():
                     if line:
                         print('\t{}'.format(line))
+
+    def encode(self, args):
+        entry = config_handler.entry(args['entry_name'])
+        if entry:
+            pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
+            encoded = EncFSHandler.encode(encfs_dir_path = entry.encfs_dir_path,
+                                                        enc_cfg_path = entry.encfs_config_path,
+                                                                filename = args['file_entry_name'], pwd = pwd)
+            if encoded:
+                # Print the key
+                print('Encoded: {}'.format(encoded))
+
+    def decode(self, args):
+        entry = config_handler.entry(args['entry_name'])
+        if entry:
+            pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
+            decoded = EncFSHandler.decode(encfs_dir_path = entry.encfs_dir_path,
+                                                        enc_cfg_path = entry.encfs_config_path,
+                                                                filename = args['file_entry_name'], pwd = pwd)
+            if decoded:
+                # Print thdekey
+                print('Decoded: {}'.format(decoded))
 
 
 def main():

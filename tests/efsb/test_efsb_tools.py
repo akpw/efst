@@ -38,3 +38,39 @@ class EFSBTests(EFSBTest):
 
         self._unregister_test_entry()
 
+    def test_encode(self):
+        #return ##
+        self._register_test_entry()
+
+        cmd = 'efsb encode -en {0} -fn {1}'.format(self.test_entry_name_shortcut,
+                                                            self._decoded_name_string())
+        output = run_cmd(cmd)
+        self.assertIn(self._encoded_name_string(), output.split())
+
+        self._unregister_test_entry()
+
+    def test_decode(self):
+        #return ##
+        self._register_test_entry()
+
+        cmd = 'efsb decode -en {0} -fn {1}'.format(self.test_entry_name_shortcut,
+                                                            self._encoded_name_string())
+        output = run_cmd(cmd)
+        self.assertIn(self._decoded_name_string(), output.split())
+
+        self._unregister_test_entry()
+
+
+    # Helpers
+    @staticmethod
+    def _encoded_name_string():
+        return 'N95oj-9Z1FmGDrJ0bet,t7HxZu2s'
+
+
+    @staticmethod
+    def _decoded_name_string():
+        return  'EFSBTest_TestString'
+
+
+
+

@@ -78,7 +78,7 @@ class EFSBOptionsParser(EFSTOptionsParser):
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = decode_parser.add_argument_group('Required Arguments')
         self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
-        self._add_file_entry_name(required_args_group, help = 'Name of file entry to decode')
+        self._add_file_entry_name(required_args_group, help = '(File entry) name to decode')
 
 
         # Encode
@@ -87,8 +87,7 @@ class EFSBOptionsParser(EFSTOptionsParser):
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = encode_parser.add_argument_group('Required Arguments')
         self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
-        self._add_file_entry_name(required_args_group, help = 'Name of file entry to encode')
-
+        self._add_file_entry_name(required_args_group, help = '(File entry) name to encode')
 
 
     # Options checking
@@ -98,7 +97,7 @@ class EFSBOptionsParser(EFSTOptionsParser):
         super()._check_cmd_args(args, parser)
 
         # Registered Entry name could be a partial match, need to expand
-        if args['sub_cmd'] in (EFSBCommands.SHOW):
+        if args['sub_cmd'] in (EFSBCommands.SHOW, EFSBCommands.ENCODE, EFSBCommands.DECODE):
             args['entry_name'] = UniquePartialMatchList(
                                     config_handler.registered_entries()).find(args['entry_name'])
 
@@ -111,7 +110,7 @@ class EFSBOptionsParser(EFSTOptionsParser):
     # Helpers
     @staticmethod
     def _add_file_entry_name(parser, help = 'Name of file entry'):
-        parser.add_argument('-fe', '--file-entry', dest = 'file_entry',
+        parser.add_argument('-fn', '--file-entry-name', dest = 'file_entry_name',
                         type = str,
                         required = True,
                         help = help)
