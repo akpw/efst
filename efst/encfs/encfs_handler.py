@@ -11,7 +11,7 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
-import os, shlex
+import os, shlex, shutil
 from efst.encfs.encfs_cfg import EncFSCFG
 from efst.encfs.encfs_cmd import EncFSCommands
 from efst.utils.efst_utils import run_cmd, CmdProcessingError, temp_dir, FSHelper
@@ -115,7 +115,7 @@ class EncFSHandler:
                 print('Wrong backend folder path: {}'.format(encfs_dir_path))
             return None
 
-        cmd = EncFSCommands.build_ctl_show_cmd(encfs_dir_path = encfs_dir_path, enc_cfg_path = enc_cfg_path)
+        cmd = EncFSCommands.build_ctl_show_info_cmd(encfs_dir_path = encfs_dir_path, enc_cfg_path = enc_cfg_path)
         try:
             output = run_cmd(cmd, shell = True)
         except CmdProcessingError as e:
@@ -125,4 +125,27 @@ class EncFSHandler:
         else:
             return output
 
+    @staticmethod
+    def key_info(encfs_dir_path, enc_cfg_path, pwd = None, quiet = False):
+        if not (os.path.exists(enc_cfg_path) and os.path.isfile(enc_cfg_path)):
+            if not quiet:
+                print('Wrong conf/key path: {}'.format(enc_cfg_path))
+            return None
 
+        if not os.path.exists(encfs_dir_path):
+            if not quiet:
+                print('Wrong backend folder path: {}'.format(encfs_dir_path))
+            return None
+
+        with temp_dir() as tmp_encfs:
+            target_path = os.path.join(tmp_encfs, EncFSCFG.DEFAULT_CFG_FNAME)
+            shutil.copy(enc_cfg_path, target_path)
+            cmd = EncFSCommands.build_ctl_show_key_cmd(encfs_dir_path = tmp_encfs)
+            try:
+                output = EncFSCommands.expectant_key(cmd, pwd)
+            except CmdProcessingError as e:
+                if not quiet:
+                    print ('Error while getting EncFS key info: {}'.format(e.args[0]))
+                return None
+            else:
+                return output

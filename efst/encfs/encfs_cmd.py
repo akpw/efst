@@ -41,11 +41,15 @@ class EncFSCommands:
 
 
     @staticmethod
-    def build_ctl_show_cmd(encfs_dir_path, enc_cfg_path):
+    def build_ctl_show_info_cmd(encfs_dir_path, enc_cfg_path):
         return ''.join((
                         'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)),
                         ' encfsctl info {}'.format(shlex.quote(encfs_dir_path))
                         ))
+
+    @staticmethod
+    def build_ctl_show_key_cmd(encfs_dir_path):
+        return 'encfsctl showKey {}'.format(shlex.quote(encfs_dir_path))
 
 
     @staticmethod
@@ -67,14 +71,13 @@ class EncFSCommands:
         child.expect('filesystem block size')
         child.sendline(cfg_entry.blockSize)
 
+        # filename encoding
         output = io.StringIO()
         child.logfile_read = output
         child.expect('The following filename encoding algorithms are available')
-        child.logfile_read = None
 
-        # filename encoding
         name_alg = cfg_entry.nameAlg
-        lines = output.getvalue().split('\n')
+        lines = output.getvalue().splitlines()
         for line in lines:
             if line.startswith('3. Stream'):
                 # Block32 not supported, need to adjust the numbering
@@ -87,6 +90,7 @@ class EncFSCommands:
                     name_alg -= 1
                     name_alg = str(name_alg)
         child.sendline(name_alg)
+        child.logfile_read = None
 
         child.expect('Enable filename initialization vector chaining')
         child.sendline(cfg_entry.chainedNameIV)
@@ -121,4 +125,24 @@ class EncFSCommands:
 
         return False
 
+    @staticmethod
+    def expectant_key(cmd, pwd):
+        child = pexpect.spawnu(cmd)
+
+        child.expect('EncFS Password')
+
+        output = io.StringIO()
+        child.logfile_read = output
+        child.sendline(pwd)
+
+        child.expect(pexpect.EOF, timeout=None)
+        child.close()
+
+        if child.exitstatus == 0:
+            lines = output.getvalue().splitlines()
+            for line in lines:
+                if (line):
+                    return(line)
+
+        return None
 

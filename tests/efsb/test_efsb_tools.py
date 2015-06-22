@@ -32,7 +32,7 @@ class EFSBTests(EFSBTest):
         #return ##
         self._register_test_entry()
 
-        cmd = 'efsb show -en {}'.format(self.test_entry_name_shortcut)
+        cmd = 'efsb show -en {} -sk'.format(self.test_entry_name_shortcut)
         output = run_cmd(cmd)
         print('\n', output)
 

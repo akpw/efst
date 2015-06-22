@@ -19,6 +19,8 @@ from efst.config.efst_config import config_handler
 from efst.utils.efst_utils import UniquePartialMatchList
 
 class EFSBCommands(EFSTCommands):
+    ENCODE = 'encode'
+    DECODE = 'decode'
 
     @classmethod
     def commands_meta(cls):
@@ -59,6 +61,33 @@ class EFSBOptionsParser(EFSTOptionsParser):
         required_args_group = show_parser.add_argument_group('Required Arguments')
         self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
 
+        advanced_args_group = show_parser.add_argument_group('Advanced Arguments')
+        advanced_args_group.add_argument("-sk", "--show-key", dest='show_key',
+                    help = 'Shows encryption key',
+                    action='store_true')
+        advanced_args_group.add_argument("-cr", "--cruft", dest='show_cruft',
+                    help = 'Shows un-decodable filenames in the backend folder',
+                    action='store_true')
+
+
+        # Decode
+        decode_parser = subparsers.add_parser(EFSBCommands.DECODE,
+                                   description = 'Decodes a file entry name to its PlainText version',
+                                             formatter_class=EFSTHelpFormatter)
+        required_args_group = decode_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
+        self._add_file_entry_name(required_args_group, help = 'Name of file entry to decode')
+
+
+        # Encode
+        encode_parser = subparsers.add_parser(EFSBCommands.ENCODE,
+                                   description = 'Encodes a file entry name to its CipherText version',
+                                             formatter_class=EFSTHelpFormatter)
+        required_args_group = encode_parser.add_argument_group('Required Arguments')
+        self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
+        self._add_file_entry_name(required_args_group, help = 'Name of file entry to encode')
+
+
 
     # Options checking
     def _check_cmd_args(self, args, parser):
@@ -78,3 +107,9 @@ class EFSBOptionsParser(EFSTOptionsParser):
         return None
 
     # Helpers
+    @staticmethod
+    def _add_file_entry_name(parser, help = 'Name of file entry'):
+        parser.add_argument('-fe', '--file-entry', dest = 'file_entry',
+                        type = str,
+                        required = True,
+                        help = help)
