@@ -21,7 +21,7 @@
 
 The EFST project help manage EncFS-encrypted data, making it easy to organize various EncFS assets and then effectively operate it via a few simple commands. In addition to common operations such as mounting / un-mounting registered EncFS volume entries, EFST simplifies and automates advanced EncFS features such as e.g. reverse encryption for encrypted backups or multiple interleaved EncFS file systems for plausible deniability.
 
-The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of two main command-line utilities.
+The EFST project is written in [Python 3.4](https://www.python.org/download/releases/3.4.1/) and currently consists of three main command-line utilities.
 
 [**EFSM**](https://github.com/akpw/efst#efsm) enables creating / registering / operating EncFS backend store directories and related assets such as target mountpoint folder, mount volume name, path to EncFS config/key file, etc.
 One way to learn about available EFSM options would be via running:
@@ -173,6 +173,9 @@ Since we stubbornly keep using the same backend folder ```~/Dropbox/.my_secret_f
 
 To keep things simple here, I'll be off-loading more advanced used-cases to a later blog. In the meantime, all the details could be revealed via reading the individual commands description below or just using the ```-h``` switch in the command line.
 
+[**EFSB**](https://github.com/akpw/efst#efsb) is a EFST configuration tool for managing EncFS backend stores folders. It can show registered EncFS File Systems info, retrieve plaintext EncFS key values, change EncFS passwords, list encrypted files, encode / decode file names, show EncFS
+cruft info, etc.
+
 
 ##Full description of CLI Commands
 ###efsm
@@ -195,6 +198,24 @@ To keep things simple here, I'll be off-loading more advanced used-cases to a la
         {create, register, unregister, show, mount, umount, info, version}
 
         $ efsc {command} -h  #run this for detailed help on individual commands
+
+
+###efsb
+
+    EFSB helps manage backened stores for registered EFST entries
+      . action commands:
+        .. show         Shows info about a registered EncFS entry backend
+        .. encode       Encodes a file entry name to its CipherText version
+        .. decode       Decodes a file entry name to its PlainText version
+        .. info         Shows info about the EFSB utility
+        .. version      Shows EFST version
+
+    Usage: $ efsb [-h]
+                    {create-key, register, show, unregister, info, version}
+      Commands:
+         {show, encode, decode}
+
+        $ efsb {command} -h  #run this for detailed help on individual commands
 
 
 ###efsc
