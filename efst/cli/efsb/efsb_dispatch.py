@@ -54,8 +54,8 @@ class EFSBDispatcher(EFSTDispatcher):
             # Print backend info for a given key
             print('{} Volume Info:'.format(entry_type))
 
-            print('  Backend Store Path ({0}): {1}'.format(entry_type, entry.encfs_dir_path))
-            print('  Conf/Key Path: {}'.format(entry.encfs_config_path))
+            print('  Backend Store Path ({0}):\n\t{1}'.format(entry_type, entry.encfs_dir_path))
+            print('  Conf/Key Path:\n\t{}'.format(entry.encfs_config_path))
 
             if args['show_key']:
                 pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
@@ -69,7 +69,7 @@ class EFSBDispatcher(EFSTDispatcher):
                             self._store_pwd(pwd, entry.pwd_entry)
 
                         # Print the key
-                        print('  The Key: {}'.format(key_info))
+                        print('  The Key (PlainText Value):\n\t{}'.format(key_info))
 
             backend_info = EncFSHandler.backend_info(encfs_dir_path = entry.encfs_dir_path,
                                                                 enc_cfg_path = entry.encfs_config_path)
@@ -78,6 +78,10 @@ class EFSBDispatcher(EFSTDispatcher):
                 for line in backend_info.splitlines():
                     if line:
                         print('\t{}'.format(line))
+
+            if args['show_cruft']:
+                print('  Un-decodable filenames:')
+                print('\tTDB...')
 
     def encode(self, args):
         entry = config_handler.entry(args['entry_name'])
