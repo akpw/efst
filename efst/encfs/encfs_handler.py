@@ -130,13 +130,50 @@ class EncFSHandler:
             shutil.copy(enc_cfg_path, target_path)
             cmd = EncFSCommands.build_ctl_show_key_cmd(encfs_dir_path = tmp_encfs)
             try:
-                output = EncFSCommands.expectant_key(cmd, pwd)
+                output = EncFSCommands.expectant_pwd(cmd, pwd)
             except CmdProcessingError as e:
                 if not quiet:
                     print ('Error while getting EncFS key value info: {}'.format(e.args[0]))
-                return None
             else:
-                return output
+                return EncFSHandler._first_printable_line(output)
+
+        return None
+
+
+    @staticmethod
+    def cruft_info(encfs_dir_path, enc_cfg_path, target_cruft_path = None, pwd = None, quiet = False):
+        ''' EncFS un-decodable filenames
+        '''
+        # validate inputs
+        cruft_info, env_backup = None, None
+        if not EncFSHandler._check_args(encfs_dir_path = encfs_dir_path,
+                                                enc_cfg_path = enc_cfg_path, quiet = quiet):
+            return cruft_info
+
+        with temp_dir() as tmp_encfs:
+            tmp_cruft_path = os.path.join(tmp_encfs, 'cruft')
+            cmd = EncFSCommands.build_ctl_show_cruft_cmd(encfs_dir_path = encfs_dir_path,
+                                                                    cruft_path = tmp_cruft_path)
+            cruft_info = None
+            try:
+                if enc_cfg_path:
+                    if os.environ.get(EncFSCFG.ENCFS_CONFIG):
+                        env_backup = os.environ.get(EncFSCFG.ENCFS_CONFIG)
+                    os.environ[EncFSCFG.ENCFS_CONFIG] = enc_cfg_path
+                cruft_info = EncFSCommands.expectant_pwd(cmd, pwd).strip()
+            except CmdProcessingError as e:
+                if not quiet:
+                    print ('Error while getting EncFS cruft info: {}'.format(e.args[0]))
+            else:
+                if tmp_cruft_path and target_cruft_path and os.path.exists(tmp_cruft_path):
+                    shutil.copy(tmp_cruft_path, target_cruft_path)
+            finally:
+                if env_backup:
+                    os.environ[EncFSCFG.ENCFS_CONFIG] = env_backup
+                else:
+                    del os.environ[EncFSCFG.ENCFS_CONFIG]
+
+            return cruft_info.strip() if cruft_info else None
 
     @staticmethod
     def encode(encfs_dir_path, enc_cfg_path, filename, pwd, quiet = False):
@@ -189,6 +226,7 @@ class EncFSHandler:
         return None
 
     # Helpers
+    @staticmethod
     def _check_args(encfs_dir_path = None, enc_cfg_path = None, quiet = False):
         if enc_cfg_path and not (os.path.exists(enc_cfg_path) and os.path.isfile(enc_cfg_path)):
             if not quiet:
@@ -201,5 +239,19 @@ class EncFSHandler:
             return False
 
         return True
+
+
+    @staticmethod
+    def _first_printable_line(lines):
+        if not lines:
+            return None
+        else:
+            for line in lines.splitlines():
+                if (line):
+                    return line
+
+
+
+
 
 

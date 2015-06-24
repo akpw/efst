@@ -29,6 +29,8 @@ class EncFSCFG:
                                                 'blockMACBytes', 'blockMACRandBytes', 'allowHoles'])
     DEFAULT_CFG_FNAME = '.encfs6.xml'
 
+    ENCFS_CONFIG = 'ENCFS6_CONFIG'
+
 
 @unique
 class EncFSAlgorithms(Enum):

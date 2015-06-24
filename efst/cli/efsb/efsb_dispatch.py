@@ -16,7 +16,7 @@ from efst.cli.efst.efst_dispatch import EFSTDispatcher
 from efst.encfs.encfs_handler import EncFSHandler
 from efst.cli.efsb.efsb_options import EFSBOptionsParser, EFSBCommands
 from efst.config.efst_config import config_handler, EntryTypes
-from efst.utils.efst_utils import PasswordHandler
+from efst.utils.efst_utils import PasswordHandler, get_last_digit
 from efst.encfs.encfs_cfg import EncFSCipherAlg, EncFSNameAlg, EncFSCFG
 
 
@@ -45,6 +45,7 @@ class EFSBDispatcher(EFSTDispatcher):
 
     # Dispatched methods
     def show_info(self, args):
+        print(args)
         entry = config_handler.entry(args['entry_name'])
         if entry:
             if entry.entry_type == EntryTypes.CipherText:
@@ -57,10 +58,11 @@ class EFSBDispatcher(EFSTDispatcher):
             print('  Backend Store Path ({0}):\n\t{1}'.format(entry_type, entry.encfs_dir_path))
             print('  Conf/Key Path:\n\t{}'.format(entry.encfs_config_path))
 
+            pwd = None
             if args['show_key']:
                 pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
                 if not pwd:
-                    print('Password is required to show the encription key value')
+                    print('Password is required to access the encription key value')
                 else:
                     key_info = EncFSHandler.key_info(encfs_dir_path = entry.encfs_dir_path, pwd = pwd,
                                                                     enc_cfg_path = entry.encfs_config_path)
@@ -79,9 +81,31 @@ class EFSBDispatcher(EFSTDispatcher):
                     if line:
                         print('\t{}'.format(line))
 
-            if args['show_cruft']:
-                print('  Un-decodable filenames:')
-                print('\tTDB...')
+            if args['cruft_summary'] or args['cruft_file']:
+                if not pwd:
+                    pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
+                    if not pwd:
+                        print('Password is required to access the cruft info')
+                if pwd:
+                    print('  Un-decodable filenames:')
+                    cruft_info = EncFSHandler.cruft_info(encfs_dir_path = entry.encfs_dir_path,
+                                                        pwd = pwd,
+                                                            enc_cfg_path = entry.encfs_config_path,
+                                                                target_cruft_path = args['cruft_file'])
+                    if cruft_info:
+                        if new_pwd:
+                            self._store_pwd(pwd, entry.pwd_entry)
+
+                        cruft_num = get_last_digit(cruft_info)
+                        if args['cruft_summary']:
+                            print('\t{}'.format(cruft_info))
+                        if args['cruft_file']:
+                            if cruft_num > 0:
+                                print('\tCruft info stored to {}'.format(args['cruft_file']))
+                            else:
+                                print('\tNo cruft found')
+                        elif cruft_num > 0:
+                            print('\tUse the <-cf, --cruft-file> parameter to store detailed cruft info to a file')
 
     def encode(self, args):
         entry = config_handler.entry(args['entry_name'])

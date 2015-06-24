@@ -16,7 +16,7 @@ from efst.cli.efst.efst_options import EFSTOptionsParser, EFSTHelpFormatter, EFS
 from efst.encfs.encfs_cfg import EncFSCFG
 from efst.encfs.encfs_cfg import EncFSCipherAlg, EncFSNameAlg
 from efst.config.efst_config import config_handler
-from efst.utils.efst_utils import UniquePartialMatchList
+from efst.utils.efst_utils import UniquePartialMatchList, FSHelper
 
 class EFSBCommands(EFSTCommands):
     ENCODE = 'encode'
@@ -67,9 +67,12 @@ class EFSBOptionsParser(EFSTOptionsParser):
         advanced_args_group.add_argument("-sk", "--show-key", dest='show_key',
                     help = 'Shows encryption key',
                     action='store_true')
-        advanced_args_group.add_argument("-cr", "--cruft", dest='show_cruft',
-                    help = 'Shows un-decodable filenames in the backend folder',
+        advanced_args_group.add_argument("-cs", "--cruft-summary", dest='cruft_summary',
+                    help = 'Shows summary info on un-decodable filenames',
                     action='store_true')
+        advanced_args_group.add_argument("-cf", "--cruft-file", dest='cruft_file',
+                    type = str,
+                    help = 'Stores detailed cruft info to specified file name')
 
 
         # Decode
@@ -100,6 +103,11 @@ class EFSBOptionsParser(EFSTOptionsParser):
         if args['sub_cmd'] in (EFSBCommands.SHOW, EFSBCommands.ENCODE, EFSBCommands.DECODE):
             args['entry_name'] = UniquePartialMatchList(
                                     config_handler.registered_entries()).find(args['entry_name'])
+
+        if args['sub_cmd'] == EFSBCommands.SHOW:
+            if args['cruft_file']:
+                args['cruft_file'] = FSHelper.full_path(args['cruft_file'])
+
 
     @property
     def _default_command(self):

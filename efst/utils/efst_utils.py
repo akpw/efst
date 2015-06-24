@@ -35,14 +35,23 @@ def run_cmd(cmd, shell = False):
     return output
 
 def get_last_digit_from_shell_cmd(cmd):
-    cmd_output = run_cmd(cmd, shell = True)
+    try:
+        cmd_output = run_cmd(cmd, shell = True)
+    except CmdProcessingError as e:
+        if not quiet:
+            print ('Error while running cmd: {}'.format(e.args[0]))
+        return -1
+    else:
+        return _get_last_digit(cmd_output)
 
+def get_last_digit(str_to_search):
     p = re.compile('(\d*\.?\d+)')
-    match = p.search(cmd_output)
+    match = p.search(str_to_search)
     if match:
         return float(match.group())
     else:
         return -1
+
 
 def encfs_version():
     cmd = 'encfs --version'

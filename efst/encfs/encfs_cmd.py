@@ -13,7 +13,7 @@
 
 import sys, shlex, pexpect, io
 from distutils.util import strtobool
-from efst.encfs.encfs_cfg import EncFSNameAlg
+from efst.encfs.encfs_cfg import EncFSNameAlg, EncFSCFG
 from efst.config.efst_config import config_handler
 
 ''' EncFS Commands Helpers
@@ -27,7 +27,7 @@ class EncFSCommands:
         '''
         cmd = ''.join((
                         'echo {} | '.format(shlex.quote(pwd)) if pwd else '',
-                        ' ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        ' {0}={1}'.format(EncFSCFG.ENCFS_CONFIG, shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfs',
                         ' -S' if pwd else '',
                         ' --reverse' if reverse else '',
@@ -45,7 +45,7 @@ class EncFSCommands:
         ''' Builds EnFSCtl info command
         '''
         return ''.join((
-                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        '{0}={1}'.format(EncFSCFG.ENCFS_CONFIG, shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl info {}'.format(shlex.quote(encfs_dir_path))
                         )).strip()
 
@@ -55,12 +55,22 @@ class EncFSCommands:
         '''
         return 'encfsctl showKey {}'.format(shlex.quote(encfs_dir_path)).strip()
 
+
+    @staticmethod
+    def build_ctl_show_cruft_cmd(encfs_dir_path, cruft_path = None):
+        ''' Builds EnFSCtl showcruft command
+        '''
+        return ''.join(('/bin/bash -c "',
+                       'encfsctl showcruft {}'.format(shlex.quote(encfs_dir_path)),
+                       ' >> {}"'.format(shlex.quote(cruft_path)) if cruft_path else '"'
+                       )).strip()
+
     @staticmethod
     def build_ctl_encode_cmd(encfs_dir_path, enc_cfg_path, filename, pwd):
         ''' Builds EnFSCtl encode command
         '''
         return ''.join((
-                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        '{0}={1}'.format(EncFSCFG.ENCFS_CONFIG, shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl encode {}'.format(shlex.quote(encfs_dir_path)),
                         ' {}'.format(shlex.quote(filename)),
                         ' --extpass="echo {}"'.format(shlex.quote(pwd)),
@@ -71,7 +81,7 @@ class EncFSCommands:
         ''' Builds EnFSCtl decode command
         '''
         return ''.join((
-                        'ENCFS6_CONFIG={}'.format(shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
+                        '{0}={1}'.format(EncFSCFG.ENCFS_CONFIG, shlex.quote(enc_cfg_path)) if enc_cfg_path else '',
                         ' encfsctl decode {}'.format(shlex.quote(encfs_dir_path)),
                         ' {}'.format(shlex.quote(filename)),
                         ' --extpass="echo {}"'.format(shlex.quote(pwd)),
@@ -151,7 +161,7 @@ class EncFSCommands:
         return False
 
     @staticmethod
-    def expectant_key(cmd, pwd):
+    def expectant_pwd(cmd, pwd):
         ''' Extracts EncFS key value in plaintext
         '''
         child = pexpect.spawnu(cmd)
@@ -166,10 +176,7 @@ class EncFSCommands:
         child.close()
 
         if child.exitstatus == 0:
-            lines = output.getvalue().splitlines()
-            for line in lines:
-                if (line):
-                    return(line)
+            return output.getvalue()
 
         return None
 
