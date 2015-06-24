@@ -32,7 +32,8 @@ class EFSBTests(EFSBTest):
         #return ##
         self._register_test_entry()
 
-        cmd = 'efsb show -en {} -sk'.format(self.test_entry_name_shortcut)
+        cmd = 'efsb show -en {0} -sk -cs -cf {1}'.format(self.test_entry_name_shortcut,
+                                                            os.path.join(self.bckp_dir, 'test_cruft.txt'))
         output = run_cmd(cmd)
         print('\n', output)
 

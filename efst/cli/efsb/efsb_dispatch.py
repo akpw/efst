@@ -45,7 +45,6 @@ class EFSBDispatcher(EFSTDispatcher):
 
     # Dispatched methods
     def show_info(self, args):
-        print(args)
         entry = config_handler.entry(args['entry_name'])
         if entry:
             if entry.entry_type == EntryTypes.CipherText:
@@ -58,6 +57,7 @@ class EFSBDispatcher(EFSTDispatcher):
             print('  Backend Store Path ({0}):\n\t{1}'.format(entry_type, entry.encfs_dir_path))
             print('  Conf/Key Path:\n\t{}'.format(entry.encfs_config_path))
 
+            #1 Key value info
             pwd = None
             if args['show_key']:
                 pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
@@ -68,11 +68,14 @@ class EFSBDispatcher(EFSTDispatcher):
                                                                     enc_cfg_path = entry.encfs_config_path)
                     if key_info:
                         if new_pwd:
+                            # pwd confirmed, offer to store in keychain
                             self._store_pwd(pwd, entry.pwd_entry)
+                            new_pwd = False
 
                         # Print the key
                         print('  The Key (PlainText Value):\n\t{}'.format(key_info))
 
+            #2 General backend store info
             backend_info = EncFSHandler.backend_info(encfs_dir_path = entry.encfs_dir_path,
                                                                 enc_cfg_path = entry.encfs_config_path)
             if backend_info:
@@ -81,6 +84,7 @@ class EFSBDispatcher(EFSTDispatcher):
                     if line:
                         print('\t{}'.format(line))
 
+            #3 Cruft info
             if args['cruft_summary'] or args['cruft_file']:
                 if not pwd:
                     pwd, new_pwd = PasswordHandler.get_pwd(entry.pwd_entry)
@@ -89,11 +93,12 @@ class EFSBDispatcher(EFSTDispatcher):
                 if pwd:
                     print('  Un-decodable filenames:')
                     cruft_info = EncFSHandler.cruft_info(encfs_dir_path = entry.encfs_dir_path,
-                                                        pwd = pwd,
-                                                            enc_cfg_path = entry.encfs_config_path,
+                                                                pwd = pwd,
+                                                                enc_cfg_path = entry.encfs_config_path,
                                                                 target_cruft_path = args['cruft_file'])
                     if cruft_info:
                         if new_pwd:
+                            # pwd confirmed, offer to store in keychain
                             self._store_pwd(pwd, entry.pwd_entry)
 
                         cruft_num = get_last_digit(cruft_info)

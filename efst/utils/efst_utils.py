@@ -20,6 +20,21 @@ from contextlib import contextmanager
 ''' Utilities / Helpers
 '''
 
+@contextmanager
+def temp_dir(quiet = True):
+    ''' Temp dir context manager
+    '''
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        yield tmp_dir
+    finally:
+        # remove tmp dir
+        try:
+            shutil.rmtree(tmp_dir)
+        except OSError as e:
+            if not quiet:
+                print ('Error while removing a tmp dir: {}'.format(e.args[0]))
+
 class CmdProcessingError(Exception):
     pass
 
@@ -52,26 +67,9 @@ def get_last_digit(str_to_search):
     else:
         return -1
 
-
 def encfs_version():
     cmd = 'encfs --version'
     return get_last_digit_from_shell_cmd(cmd)
-
-
-@contextmanager
-def temp_dir(quiet = True):
-    ''' Temp dir context manager
-    '''
-    tmp_dir = tempfile.mkdtemp()
-    try:
-        yield tmp_dir
-    finally:
-        # remove tmp dir
-        try:
-            shutil.rmtree(tmp_dir)
-        except OSError as e:
-            if not quiet:
-                print ('Error while removing a tmp dir: {}'.format(e.args[0]))
 
 
 class FSHelper:

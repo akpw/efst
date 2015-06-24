@@ -1,0 +1,2 @@
+In directory /: 
+/Users/AKPower/_Dev/GitHub/efst/tests/efsb/data/test_backend//.encfs6.xml

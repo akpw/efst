@@ -151,22 +151,10 @@ class LinuxConfig(OSConfig):
 
 
 class EFSTConfigHandler:
-    def __del__(self):
-        if self.encfs_config_env:
-            # print('restoring env to original value of: {}'.format(self.encfs_config_env))
-            os.environ[EncFSCFG.ENCFS_CONFIG] = self.encfs_config_env
-
     def __init__(self):
         self.os_config = OSConfig.os_config()
         if not self.os_config:
             sys.exit(1)
-
-        # check the ENCFS_CONFIG environment variable
-        self.encfs_config_env = None
-        if os.environ.get(EncFSCFG.ENCFS_CONFIG):
-            self.encfs_config_env = copy.copy(os.environ.get(EncFSCFG.ENCFS_CONFIG))
-            # need to temporarily modify the environment
-            del os.environ[EncFSCFG.ENCFS_CONFIG]
 
         # efst user config folder
         if not os.path.exists(self.os_config.efst_user_dir_path):

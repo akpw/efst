@@ -71,9 +71,8 @@ class EFSBOptionsParser(EFSTOptionsParser):
                     help = 'Shows summary info on un-decodable filenames',
                     action='store_true')
         advanced_args_group.add_argument("-cf", "--cruft-file", dest='cruft_file',
-                    type = str,
+                    type = lambda fpath: FSHelper.full_path(fpath, check_parent_path = True),
                     help = 'Stores detailed cruft info to specified file name')
-
 
         # Decode
         decode_parser = subparsers.add_parser(EFSBCommands.DECODE,
@@ -82,7 +81,6 @@ class EFSBOptionsParser(EFSTOptionsParser):
         required_args_group = decode_parser.add_argument_group('Required Arguments')
         self._add_entry_name(required_args_group, registered_only = True, help = "Name of a registered EFST entry")
         self._add_file_entry_name(required_args_group, help = '(File entry) name to decode')
-
 
         # Encode
         encode_parser = subparsers.add_parser(EFSBCommands.ENCODE,
@@ -103,11 +101,6 @@ class EFSBOptionsParser(EFSTOptionsParser):
         if args['sub_cmd'] in (EFSBCommands.SHOW, EFSBCommands.ENCODE, EFSBCommands.DECODE):
             args['entry_name'] = UniquePartialMatchList(
                                     config_handler.registered_entries()).find(args['entry_name'])
-
-        if args['sub_cmd'] == EFSBCommands.SHOW:
-            if args['cruft_file']:
-                args['cruft_file'] = FSHelper.full_path(args['cruft_file'])
-
 
     @property
     def _default_command(self):
