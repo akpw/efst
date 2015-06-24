@@ -72,7 +72,7 @@ class EFSBOptionsParser(EFSTOptionsParser):
                     action='store_true')
         advanced_args_group.add_argument("-cf", "--cruft-file", dest='cruft_file',
                     type = lambda fpath: FSHelper.full_path(fpath, check_parent_path = True),
-                    help = 'Stores detailed cruft info to specified file name')
+                    help = 'Stores detailed cruft info into a file at specified path')
 
         # Decode
         decode_parser = subparsers.add_parser(EFSBCommands.DECODE,
