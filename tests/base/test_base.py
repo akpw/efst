@@ -15,9 +15,13 @@ import shutil, pexpect
 from efst.utils.efst_utils import FSHelper
 from efst.config.efst_config import config_handler, EFSTConfigHandler, EFSTConfigKeys
 from efst.config.efst_config import ConfigEntries, EntryTypes
+from efst.encfs.encfs_handler import EncFSHandler
 
 class EFSTTest(unittest.TestCase):
     src_dir = bckp_dir = None
+
+    encfs_config_backup = None
+    test_encfs_config = 'A_BOGUS_ENCFS6_CONFIG_VAR'
 
     @classmethod
     def setUpClass(cls):
@@ -26,6 +30,13 @@ class EFSTTest(unittest.TestCase):
         if not os.path.exists(cls.src_dir):
             os.makedirs(cls.src_dir)
         cls.resetDataFromBackup()
+        cls.encfs_config_backup = EncFSHandler._encfs6_config_backup_and_reset(cls.test_encfs_config)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.encfs_config_backup:
+            print('will be restoring the ENCFS6_CONFIG env. var to its initial value:\n\t{}'.format(cls.encfs_config_backup))
+        EncFSHandler._encfs6_config_restore(cls.encfs_config_backup)
 
     @classmethod
     def resetDataFromBackup(cls, quiet = False):

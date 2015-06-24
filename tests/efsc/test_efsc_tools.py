@@ -22,6 +22,7 @@ from efst.config.efst_config import config_handler, EFSTConfigHandler
 class EFSCTests(EFSCTest):
     def setUp(self):
         super(EFSCTests, self).setUp()
+        self.assertTrue(os.environ[EncFSCFG.ENCFS_CONFIG] == self.test_encfs_config)
 
     def tearDown(self):
         # cleanup
