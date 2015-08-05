@@ -244,6 +244,6 @@ class EFSMOptionsParser(EFSTOptionsParser):
                         type = str,
                         help = 'Mounted volume name. If ommitted, the entry name will be used')
         optional_args_group.add_argument("-nb", "--no-batch-mount", dest='no_batch_mount',
-                    help = "Exclude from batch mounting with 'efsm mount -en All'",
+                    help = "Exclude from batch mounting",
                     action='store_true')
 
