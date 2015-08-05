@@ -132,8 +132,9 @@ class EFSMDispatcher(EFSTDispatcher):
     def mount_entry(self, args):
         ''' Mounts a registered EFST entry
         '''
-        for mount_entry_name, mount_entry in self._mount_entries(args['entry_name']):
-            print(mount_entry_name)
+        for idx, (mount_entry_name, mount_entry) in enumerate(self._mount_entries(args['entry_name'])):
+            if idx > 0: print()
+            print("Mounting: {}".format(mount_entry_name))
 
             pwd, new_pwd = PasswordHandler.get_pwd(mount_entry.pwd_entry)
             if not pwd:
@@ -152,9 +153,13 @@ class EFSMDispatcher(EFSTDispatcher):
     def umount_entry(self, args, quiet = False):
         ''' Un-mounts a registered EFST entry
         '''
-        for umount_entry_name, umount_entry in self._mount_entries(args['entry_name']):
-            print(umount_entry_name)
+        for idx, (umount_entry_name, umount_entry) in enumerate(self._mount_entries(args['entry_name'])):
+            if idx > 0: print()
+
+            print("Un-mounting: {}".format(umount_entry_name))
             EncFSHandler.umount(umount_entry.mount_dir_path, quiet = quiet)
+
+
 
     def _mount_entries(self, entry_name):
         if entry_name == EFSTConfigKeys.BATCH_MOUNT_ENTRIES_SYMBOL:
