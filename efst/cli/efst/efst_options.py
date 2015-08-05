@@ -138,14 +138,16 @@ class EFSTOptionsParser:
             return path_arg
 
     @staticmethod
-    def _add_entry_name(parser, registered_only = False, help = 'EFST Entry name'):
+    def _add_entry_name(parser, registered_only = False, help = 'EFST Entry name', show_batch_mount_symbol = False):
         parser.add_argument('-en', '--entry-name', dest = 'entry_name',
-                        type = str,
-                        metavar = config_handler.registered_entries() if registered_only else None,
-                        required = True,
-                        choices = UniquePartialMatchList(
-                                        config_handler.registered_entries()) if registered_only else None,
-                        help = help)
+            type = str,
+            metavar = config_handler.registered_entries(show_batch_mount_symbol = show_batch_mount_symbol)
+                                                                                    if registered_only else None,
+            required = True,
+            choices = UniquePartialMatchList(
+                            config_handler.registered_entries(show_batch_mount_symbol = show_batch_mount_symbol))
+                                                                                    if registered_only else None,
+            help = help)
 
     @staticmethod
     def _add_config_entry(parser):

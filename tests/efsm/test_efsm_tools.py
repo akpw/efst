@@ -17,7 +17,7 @@ from .test_efsm_base import EFSMTest
 from efst.utils.efst_utils import run_cmd, CmdProcessingError
 from efst.encfs.encfs_cfg import EncFSCFG
 from efst.encfs.encfs_handler import EncFSHandler
-from efst.config.efst_config import config_handler, EntryTypes
+from efst.config.efst_config import config_handler, EntryTypes, EFSTConfigKeys
 
 
 class EFSMTests(EFSMTest):
@@ -94,6 +94,17 @@ class EFSMTests(EFSMTest):
         self._umount_test_entry()
         self._unregister_test_entry()
 
+    def test_mount_all(self):
+        #return ##
+        self._register_test_entry()
+
+        cmd = 'efsm mount -en {}'.format(EFSTConfigKeys.BATCH_MOUNT_ENTRIES_SYMBOL)
+        output = run_cmd(cmd)
+        self.assertTrue(os.path.exists(self.test_entry.mount_dir_path) \
+                                        and os.path.ismount(self.test_entry.mount_dir_path))
+        self._umount_test_entry()
+        self._unregister_test_entry()
+
     def test_umount(self):
         #return ##
         self._register_test_entry()
@@ -104,6 +115,18 @@ class EFSMTests(EFSMTest):
         self.assertTrue(os.path.exists(self.test_entry.mount_dir_path) \
                                         and not os.path.ismount(self.test_entry.mount_dir_path))
         self._unregister_test_entry()
+
+    def test_umount_all(self):
+        #return ##
+        self._register_test_entry()
+        self._mount_test_entry()
+
+        cmd = 'efsm umount -en {}'.format(EFSTConfigKeys.BATCH_MOUNT_ENTRIES_SYMBOL)
+        output = run_cmd(cmd)
+        self.assertTrue(os.path.exists(self.test_entry.mount_dir_path) \
+                                        and not os.path.ismount(self.test_entry.mount_dir_path))
+        self._unregister_test_entry()
+
 
 
     # Helpers

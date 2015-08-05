@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='efst',
-    version='0.25',
+    version='0.26',
 
     url='https://github.com/akpw/efst',
 

@@ -40,6 +40,7 @@ class EFSTConfigKeys:
 
     # UnRegistered entries placeholder
     NO_ENTRIES_REGISTERED = 'NoEntriesRegistered'
+    BATCH_MOUNT_ENTRIES_SYMBOL = '+'
 
     # EncFS Entry Keys
     PWD_ENTRY_NAME_KEY = 'PWD_ENTRY_NAME'
@@ -47,6 +48,7 @@ class EFSTConfigKeys:
     ENCFS_DIR_PATH_KEY = 'ENCFS_DIR_PATH'
     MOUNT_DIR_PATH_KEY = 'MOUNT_DIR_PATH'
     UNMOUNT_ON_IDLE_KEY = 'UNMOUNT_ON_IDLE'
+    NO_BATCH_MOUNT_KEY = 'NO_BATCH_MOUNT'
     VOLUME_NAME_KEY = 'VOLUME_NAME'
 
     # EncFS Config Entry Keys
@@ -80,7 +82,7 @@ class EFSTConfigKeys:
 class ConfigEntries:
     EFSTEntry = namedtuple('EFSTEntry',
                         ['entry_type', 'pwd_entry', 'encfs_config_path', 'encfs_dir_path',
-                                            'mount_dir_path', 'unmount_on_idle', 'volume_name'])
+                                            'mount_dir_path', 'unmount_on_idle', 'no_batch_mount', 'volume_name'])
 
 
 class OSConfig:
@@ -200,6 +202,7 @@ class EFSTConfigHandler:
                     EFSTConfigKeys.ENCFS_DIR_PATH_KEY: entry_info.encfs_dir_path,
                     EFSTConfigKeys.MOUNT_DIR_PATH_KEY: entry_info.mount_dir_path,
                     EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY: entry_info.unmount_on_idle,
+                    EFSTConfigKeys.NO_BATCH_MOUNT_KEY: entry_info.no_batch_mount,
                     EFSTConfigKeys.VOLUME_NAME_KEY: entry_info.volume_name}
             self.config.write()
             if not quiet:
@@ -223,13 +226,16 @@ class EFSTConfigHandler:
                 print('Entry is not registered: {}'.format(entry_name))
             return False
 
-    def registered_entries(self):
+    def registered_entries(self, show_batch_mount_symbol = False):
         ''' All EFST registered entries
         '''
         registered_entries = [entry for entry in self.config[EFSTConfigKeys.CIPHER_TEXT_ENTRIES_KEY].keys()]
         registered_entries += [entry for entry in self.config[EFSTConfigKeys.REVERSED_CIPHER_TEXT_ENTRIES_KEY].keys()]
         if not registered_entries:
             registered_entries = [EFSTConfigKeys.NO_ENTRIES_REGISTERED]
+        else:
+            if show_batch_mount_symbol:
+                registered_entries += [EFSTConfigKeys.BATCH_MOUNT_ENTRIES_SYMBOL]
         return registered_entries
 
     def entry(self, entry_name):
@@ -239,8 +245,15 @@ class EFSTConfigHandler:
         entry_key = self._entry_key(entry_name)
         if entry_key:
             entry_reader = self.config[entry_key][entry_name]
+
             unmount_on_idle = entry_reader.get(EFSTConfigKeys.UNMOUNT_ON_IDLE_KEY)
             unmount_on_idle = int(unmount_on_idle) if unmount_on_idle else 0
+
+            no_batch_mount = False
+            if entry_reader.get(EFSTConfigKeys.NO_BATCH_MOUNT_KEY) and \
+                        entry_reader.as_bool(EFSTConfigKeys.NO_BATCH_MOUNT_KEY):
+                no_batch_mount = True
+
             entry = ConfigEntries.EFSTEntry(
                         EFSTConfigKeys.entry_type_for_key(entry_key),
                         entry_reader.get(EFSTConfigKeys.PWD_ENTRY_NAME_KEY),
@@ -248,7 +261,9 @@ class EFSTConfigHandler:
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.ENCFS_DIR_PATH_KEY)),
                         FSHelper.full_path(entry_reader.get(EFSTConfigKeys.MOUNT_DIR_PATH_KEY)),
                         unmount_on_idle,
+                        no_batch_mount,
                         entry_reader.get(EFSTConfigKeys.VOLUME_NAME_KEY))
+
         return entry
 
     # EncFS Config entries

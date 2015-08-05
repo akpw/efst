@@ -89,6 +89,7 @@ class EFSMDispatcher(EFSTDispatcher):
                                                 args['backend_path'],
                                                 args['mountpoint_path'],
                                                 args['idle_minutes'],
+                                                args['no_batch_mount'],
                                                 args['mount_name'])
         config_handler.register_entry(entry_name = args['entry_name'], entry_info = entry_info)
 
@@ -103,6 +104,8 @@ class EFSMDispatcher(EFSTDispatcher):
         mins_format = lambda mins: '{0} min{1}'.format(mins, '' if int(mins) == 1 else 's')
         umount_idle_desc = lambda idle: mins_format(idle) if idle else 'Disabled'
 
+        batch_mount_desc = lambda no_batch_mount: 'Disabled' if no_batch_mount else 'Enabled'
+
         entry = config_handler.entry(args['entry_name'])
         print('Entry name: {}'.format(args['entry_name']))
         print('   Entry type: {}'.format(et_desc(entry.entry_type)))
@@ -111,6 +114,7 @@ class EFSMDispatcher(EFSTDispatcher):
         print('   Back-end store folder ({0}): {1}'.format(be_desc(entry.entry_type), entry.encfs_dir_path))
         print('   Mount folder ({0}): {1}'.format(mp_desc(entry.entry_type), entry.mount_dir_path))
         print('   Un-mount on idle: {}'.format(umount_idle_desc(entry.unmount_on_idle)))
+        print('   Batch Mount: {}'.format(batch_mount_desc(entry.no_batch_mount)))
         print('   Volume name: {}'.format(entry.volume_name))
 
     def unregister_entry(self, args):
@@ -128,28 +132,38 @@ class EFSMDispatcher(EFSTDispatcher):
     def mount_entry(self, args):
         ''' Mounts a registered EFST entry
         '''
-        print(args['entry_name'])
-        mount_entry = config_handler.entry(args['entry_name'])
+        for mount_entry_name, mount_entry in self._mount_entries(args['entry_name']):
+            print(mount_entry_name)
 
-        pwd, new_pwd = PasswordHandler.get_pwd(mount_entry.pwd_entry)
-        if not pwd:
-            print('No password entered, exiting')
-        else:
-            if EncFSHandler.mount(pwd,
-                        mount_entry.encfs_config_path,
-                        mount_entry.encfs_dir_path,
-                        mount_entry.mount_dir_path,
-                        mount_entry.volume_name,
-                        unmount_on_idle = mount_entry.unmount_on_idle,
-                        reverse = True if mount_entry.entry_type == EntryTypes.ReversedCipherText else False):
-                if new_pwd:
-                    self._store_pwd(pwd, mount_entry.pwd_entry)
+            pwd, new_pwd = PasswordHandler.get_pwd(mount_entry.pwd_entry)
+            if not pwd:
+                print('No password entered, exiting')
+            else:
+                if EncFSHandler.mount(pwd,
+                            mount_entry.encfs_config_path,
+                            mount_entry.encfs_dir_path,
+                            mount_entry.mount_dir_path,
+                            mount_entry.volume_name,
+                            unmount_on_idle = mount_entry.unmount_on_idle,
+                            reverse = True if mount_entry.entry_type == EntryTypes.ReversedCipherText else False):
+                    if new_pwd:
+                        self._store_pwd(pwd, mount_entry.pwd_entry)
 
     def umount_entry(self, args, quiet = False):
         ''' Un-mounts a registered EFST entry
         '''
-        umount_entry = config_handler.entry(args['entry_name'])
-        EncFSHandler.umount(umount_entry.mount_dir_path, quiet = quiet)
+        for umount_entry_name, umount_entry in self._mount_entries(args['entry_name']):
+            print(umount_entry_name)
+            EncFSHandler.umount(umount_entry.mount_dir_path, quiet = quiet)
+
+    def _mount_entries(self, entry_name):
+        if entry_name == EFSTConfigKeys.BATCH_MOUNT_ENTRIES_SYMBOL:
+            for entry_name in config_handler.registered_entries():
+                entry = config_handler.entry(entry_name)
+                if not entry.no_batch_mount:
+                    yield entry_name, entry
+        else:
+            yield entry_name, config_handler.entry(entry_name)
 
 
 def main():

@@ -105,14 +105,16 @@ class EFSMOptionsParser(EFSTOptionsParser):
                                              description = 'Mounts a registered EncFS entry',
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = mount_parser.add_argument_group('Required Arguments')
-        self._add_entry_name(required_args_group, registered_only = True, help = "Name of registered entry to mount")
+        self._add_entry_name(required_args_group, registered_only = True,
+                             show_batch_mount_symbol = True, help = "Name of registered entry to mount")
 
         # Umount
         umount_parser = subparsers.add_parser(EFSMCommands.UMOUNT,
                                              description = 'Un-mounts a registered EncFS entry',
                                              formatter_class=EFSTHelpFormatter)
         required_args_group = umount_parser.add_argument_group('Required Arguments')
-        self._add_entry_name(required_args_group, registered_only = True, help = "Name of registered entry to un-mount")
+        self._add_entry_name(required_args_group, registered_only = True,
+                             show_batch_mount_symbol = True, help = "Name of registered entry to un-mount")
 
 
     # Options checking
@@ -126,8 +128,9 @@ class EFSMOptionsParser(EFSTOptionsParser):
 
         elif args['sub_cmd'] not in (EFSMCommands.REGISTER, EFSMCommands.CREATE):
             # Registered Entry name could be a partial match, need to expand
+            include_batch_mode = args['sub_cmd'] in (EFSMCommands.MOUNT, EFSMCommands.UMOUNT)
             args['entry_name'] = UniquePartialMatchList(
-                                        config_handler.registered_entries()).find(args['entry_name'])
+                                        config_handler.registered_entries(show_batch_mount_symbol = include_batch_mode)).find(args['entry_name'])
 
             if args['entry_name'] == EFSTConfigKeys.NO_ENTRIES_REGISTERED:
                 print('No suitable config entry to {}'.format(args['sub_cmd']))
@@ -240,5 +243,7 @@ class EFSMOptionsParser(EFSTOptionsParser):
         optional_args_group.add_argument('-mn', '--mount-name', dest = 'mount_name',
                         type = str,
                         help = 'Mounted volume name. If ommitted, the entry name will be used')
-
+        optional_args_group.add_argument("-nb", "--no-batch-mount", dest='no_batch_mount',
+                    help = "Exclude from batch mounting with 'efsm mount -en All'",
+                    action='store_true')
 

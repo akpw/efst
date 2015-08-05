@@ -176,6 +176,7 @@ class EFSTTest(unittest.TestCase):
                     '{}/test_backend'.format(self.src_dir),
                     '{}/mnt'.format(self.src_dir),
                     '1',
+                    False,
                     'TestEFSTEntry_Mount')
 
     # Helpers
