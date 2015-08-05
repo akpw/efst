@@ -57,7 +57,7 @@ def get_last_digit_from_shell_cmd(cmd):
             print ('Error while running cmd: {}'.format(e.args[0]))
         return -1
     else:
-        return _get_last_digit(cmd_output)
+        return get_last_digit(cmd_output)
 
 def get_last_digit(str_to_search):
     p = re.compile('(\d*\.?\d+)')
