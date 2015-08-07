@@ -175,6 +175,31 @@ To keep things simple here, I'll be off-loading more advanced used-cases to a la
 
 [**EFSB**](https://github.com/akpw/efst#efsb) is a EFST configuration tool for managing EncFS backend stores folders. It can show registered EncFS File Systems info, retrieve plaintext EncFS key values, change EncFS passwords, list encrypted files, encode / decode file names, show EncFS
 cruft info, etc.
+For example, to see a detailed info for the previously created `MySecrets` folder:
+
+```
+$ efsb show -en MyS -sk -cs
+CipherText Volume Info:
+  Backend Store Path (CipherText):
+    /Users/AKPower/Dropbox/.my_secret_folder
+  Conf/Key Path:
+    /Users/AKPower/Dropbox/.my_secret_folder/.encfs6.xml
+  The Key (PlainText Value):
+    9VW3vyb1WatB6MCGh51I-K6IBru9wSdeR97wYPac-x41Hf352mcTcBqLBgB4ub9LHbMTz
+  General Info:
+    Version 6 configuration; created by EncFS 1.8.1 (revision 20100713)
+    Filesystem cipher: "ssl/aes", version 3:0:0 (using 3:0:2)
+    Filename encoding: "nameio/stream", version 2:1:0 (using 2:1:2)
+    Key Size: 256 bits
+    Using PBKDF2, with 153491 iterations
+    Salt Size: 160 bits
+    Block Size: 1024 bytes
+    File holes passed through to ciphertext.
+  Un-decodable filenames:
+    Found 1 invalid file.
+    Use the <-cf, --cruft-file> parameter to store detailed cruft info to a file
+
+```
 
 
 ##Full description of CLI Commands
