@@ -13,7 +13,7 @@
 - latest from source repository: `$ pip install git+https://github.com/akpw/efst.git`
 
 ####Blog:
-   * [EFST tips & tricks](http://www.akpdev.com/tags.html#efst)
+   * [EFST tips & tricks](http://www.akpdev.com/tags.html#EFST)
 
 ##Description
 
