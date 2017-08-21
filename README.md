@@ -1,4 +1,4 @@
-####Requirements:
+#### Requirements:
 - [Python 3.4.x](https://www.python.org/download/releases/3.4.1/) or later
 - [EncFS](https://vgough.github.io/encfs/) installed and available on the command line
     * [EncFS v1.8.1](https://github.com/vgough/encfs/releases/tag/v1.8.1) or later is recommended
@@ -8,14 +8,14 @@
     * Windows: TBD / maybe
 
 
-####Install:
+#### Install:
 - from [PyPI](https://pypi.python.org/pypi/efst): `$ pip install efst`
 - latest from source repository: `$ pip install git+https://github.com/akpw/efst.git`
 
-####Blog:
+#### Blog:
    * [EFST tips & tricks](http://www.akpdev.com/tags.html#EFST)
 
-##Description
+## Description
 
 [EncFS](https://vgough.github.io/encfs/) is a free [FUSE-based](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) cryptographic file system. It transparently encrypts files, using an arbitrary directory as backend storage for the encrypted files. EncFS works on per-file basis, which makes it suitable for syncing files and protecting cloud data.
 
@@ -202,8 +202,8 @@ CipherText Volume Info:
 ```
 
 
-##Full description of CLI Commands
-###efsm
+## Full description of CLI Commands
+### efsm
 
     EFSM enables creating new and registering existing EncFS backends, to then
     easily manipulate corresponding ciphertext / plaintext views.
@@ -225,7 +225,7 @@ CipherText Volume Info:
         $ efsc {command} -h  #run this for detailed help on individual commands
 
 
-###efsb
+### efsb
 
     EFSB helps manage backened stores for registered EFST entries
       . action commands:
@@ -243,7 +243,7 @@ CipherText Volume Info:
         $ efsb {command} -h  #run this for detailed help on individual commands
 
 
-###efsc
+### efsc
 
     EFSC helps create EncFS conf/key files and manage related EFST config. entries
       . action commands:
@@ -261,10 +261,10 @@ CipherText Volume Info:
 
         $ efsc {command} -h  #run this for detailed help on individual commands
 
-##Installing Development version
+## Installing Development version
 - Clone the repo, then run: `$ python setup.py develop`
 
-**Running Tests**
+** Running Tests**
 - Run via: `$ python setup.py test`
 
 
