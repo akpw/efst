@@ -12,14 +12,22 @@
 
 from setuptools import setup, find_packages
 
+# read the README.md contents
+pkg_dir = path.abspath(path.dirname(__file__))
+with open(path.join(pkg_dir, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name='efst',
-    version='0.26',
+    version='0.27',
 
     url='https://github.com/akpw/efst',
 
     author='Arseniy Kuznetsov',
     author_email='k.arseniy@gmail.com',
+
+    long_description=long_description,
+    long_description_content_type='text/markdown',
 
     description=('''
                     Encrypted File System CLI Tools, to secure and manage your data with EncFS
