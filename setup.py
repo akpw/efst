@@ -11,6 +11,7 @@
 ## GNU General Public License for more details.
 
 from setuptools import setup, find_packages
+from os import path
 
 # read the README.md contents
 pkg_dir = path.abspath(path.dirname(__file__))
